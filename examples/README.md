@@ -2,7 +2,30 @@
 
 This directory contains example applications demonstrating various features of the BuildBureau system.
 
-## Demo Application
+## Real Functionality Demo (Recommended Start Here!)
+
+The `real-functionality` directory demonstrates all the real implementations replacing mock/placeholder code.
+
+### Running the Real Functionality Demo
+
+```bash
+cd examples/real-functionality
+go run main.go
+```
+
+### What the Demo Shows
+
+- **Specialized Agents**: Real LLM-powered agents with role-specific prompts
+- **Code Analysis**: AST parsing of Go code with function/struct counting
+- **Document Management**: CRUD operations on files
+- **File Operations**: Read, write, copy, exists, list operations
+- **Code Execution**: Safe execution of Go, Python, JavaScript, and Bash
+- **Web Search**: Simulated web search (network-safe mode)
+- **Agent Status**: Real-time status tracking through agent lifecycle
+
+Expected output shows successful execution of all tools and agent processing.
+
+## Demo Application (Multi-Agent System)
 
 The `demo` directory contains a complete walkthrough of the BuildBureau multi-agent system.
 
@@ -12,6 +35,15 @@ The `demo` directory contains a complete walkthrough of the BuildBureau multi-ag
 cd examples/demo
 go run main.go
 ```
+
+### What the Demo Shows
+
+- Complete hierarchical workflow from President to Employee
+- Project planning and task breakdown
+- Section division and implementation planning
+- Task execution with result aggregation
+- Knowledge base integration
+- Agent coordination across levels
 
 ## Google ADK Integration Example
 
@@ -41,12 +73,6 @@ go run main.go
 - Streaming responses
 - Using temperature and max tokens parameters
 - Error handling
-
-## Demo Application (Multi-Agent System)
-
-The `demo` directory contains a complete walkthrough of the BuildBureau multi-agent system.
-
-### What the Demo Shows
 
 The demo application demonstrates:
 
