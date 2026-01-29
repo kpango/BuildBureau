@@ -1,12 +1,12 @@
 # Development Guide
 
-BuildBureauの開発者向けガイド
+Developer guide for BuildBureau
 
-## 開発環境のセットアップ
+## Development Environment Setup
 
-### 必要なツール
+### Required Tools
 
-1. **Go 1.23以上**
+1. **Go 1.23 or higher**
    ```bash
    go version
    ```
@@ -20,65 +20,65 @@ BuildBureauの開発者向けガイド
    sudo apt install -y protobuf-compiler
    ```
 
-3. **Go用のprotocプラグイン**
+3. **protoc plugins for Go**
    ```bash
    make install-tools
    ```
 
-### プロジェクトのクローン
+### Clone the Project
 
 ```bash
 git clone https://github.com/kpango/BuildBureau.git
 cd BuildBureau
 ```
 
-### 依存関係のインストール
+### Install Dependencies
 
 ```bash
 make deps
 ```
 
-## ビルド
+## Build
 
-### 通常ビルド
+### Standard Build
 
 ```bash
 make build
 ```
 
-ビルドされたバイナリは`./bin/buildbureau`に配置されます。
+The built binary will be placed in `./bin/buildbureau`.
 
-### クリーンビルド
+### Clean Build
 
 ```bash
 make clean
 make build
 ```
 
-## テスト
+## Testing
 
-### 全テスト実行
+### Run All Tests
 
 ```bash
 make test
 ```
 
-### 特定パッケージのテスト
+### Test Specific Package
 
 ```bash
 go test -v ./internal/config
 go test -v ./internal/agent
 ```
 
-### テストカバレッジ
+### Test Coverage
 
 ```bash
 go test -cover ./...
 ```
 
-## コード品質
+## Code Quality
 
-### フォーマット
+### Format
 
 ```bash
 make fmt
@@ -90,50 +90,50 @@ make fmt
 make vet
 ```
 
-または統合コマンド：
+Or use the integrated command:
 
 ```bash
 make lint
 ```
 
-## プロジェクト構造
+## Project Structure
 
 ```
 BuildBureau/
 ├── cmd/
-│   └── buildbureau/          # メインアプリケーション
+│   └── buildbureau/          # Main application
 │       └── main.go
-├── internal/                  # 内部パッケージ
-│   ├── agent/                # エージェント実装
+├── internal/                  # Internal packages
+│   ├── agent/                # Agent implementation
 │   │   ├── agent.go
 │   │   └── agent_test.go
-│   ├── config/               # 設定管理
+│   ├── config/               # Configuration management
 │   │   ├── config.go
 │   │   └── config_test.go
-│   ├── grpc/                 # gRPCサービス実装
-│   ├── slack/                # Slack通知
+│   ├── grpc/                 # gRPC service implementation
+│   ├── slack/                # Slack notifications
 │   │   └── notifier.go
 │   └── ui/                   # Terminal UI
 │       └── ui.go
-├── proto/                     # Protocol Buffers定義
+├── proto/                     # Protocol Buffers definitions
 │   └── buildbureau/v1/
 │       └── service.proto
-├── pkg/                       # 公開パッケージ
-│   ├── models/               # データモデル
-│   └── utils/                # ユーティリティ
-├── docs/                      # ドキュメント
+├── pkg/                       # Public packages
+│   ├── models/               # Data models
+│   └── utils/                # Utilities
+├── docs/                      # Documentation
 │   ├── ARCHITECTURE.md
 │   └── CONFIGURATION.md
-├── config.yaml               # デフォルト設定
-├── .env.example              # 環境変数テンプレート
-├── Makefile                  # ビルドスクリプト
-├── go.mod                    # Go依存関係
+├── config.yaml               # Default configuration
+├── .env.example              # Environment variable template
+├── Makefile                  # Build scripts
+├── go.mod                    # Go dependencies
 └── README.md
 ```
 
-## 新機能の追加
+## Adding New Features
 
-### 1. 新しいエージェント実装
+### 1. Implementing a New Agent
 
 ```go
 // internal/agent/president.go
@@ -146,7 +146,7 @@ import (
 
 type PresidentAgent struct {
     *BaseAgent
-    // 追加のフィールド
+    // Additional fields
 }
 
 func NewPresidentAgent(id string, cfg config.AgentConfig) *PresidentAgent {
@@ -156,14 +156,14 @@ func NewPresidentAgent(id string, cfg config.AgentConfig) *PresidentAgent {
 }
 
 func (a *PresidentAgent) Process(ctx context.Context, input interface{}) (interface{}, error) {
-    // 実装
+    // Implementation
     return nil, nil
 }
 ```
 
-### 2. 新しいgRPCサービスの追加
+### 2. Adding a New gRPC Service
 
-1. `proto/buildbureau/v1/service.proto`にサービス定義を追加
+1. Add service definition to `proto/buildbureau/v1/service.proto`
 
 ```protobuf
 service NewService {
@@ -171,62 +171,62 @@ service NewService {
 }
 ```
 
-2. プロトコルバッファのコード生成
+2. Generate Protocol Buffer code
 
 ```bash
 make proto
 ```
 
-3. サービス実装を追加
+3. Add service implementation
 
 ```go
 // internal/grpc/new_service.go
 package grpc
 
 type NewServiceServer struct {
-    // フィールド
+    // Fields
 }
 
 func (s *NewServiceServer) NewMethod(ctx context.Context, req *pb.RequestType) (*pb.ResponseType, error) {
-    // 実装
+    // Implementation
     return &pb.ResponseType{}, nil
 }
 ```
 
-### 3. 新しいSlack通知イベントの追加
+### 3. Adding a New Slack Notification Event
 
-1. `internal/config/config.go`に通知設定を追加
+1. Add notification configuration to `internal/config/config.go`
 
 ```go
 type NotificationsConfig struct {
-    // 既存のイベント
+    // Existing events
     NewEvent NotificationConfig `yaml:"newEvent"`
 }
 ```
 
-2. `config.yaml`に設定を追加
+2. Add configuration to `config.yaml`
 
 ```yaml
 slack:
   notifications:
     newEvent:
       enabled: true
-      message: "新しいイベント: {{.Data}}"
+      message: "New event: {{.Data}}"
 ```
 
-3. `internal/slack/notifier.go`にメソッドを追加
+3. Add method to `internal/slack/notifier.go`
 
 ```go
 func (n *Notifier) SendNewEvent(ctx context.Context, data string) error {
     return n.Send(ctx, NotificationNewEvent, NotificationData{
-        // データ
+        // Data
     })
 }
 ```
 
-## デバッグ
+## Debugging
 
-### ログレベルの設定
+### Setting Log Level
 
 ```yaml
 # config.yaml
@@ -234,25 +234,25 @@ ui:
   logLevel: "debug"
 ```
 
-または環境変数：
+Or use environment variable:
 
 ```bash
 export LOG_LEVEL=debug
 ```
 
-### デバッガの使用
+### Using a Debugger
 
 ```bash
-# Delveのインストール
+# Install Delve
 go install github.com/go-delve/delve/cmd/dlv@latest
 
-# デバッグ実行
+# Run with debugger
 dlv debug ./cmd/buildbureau
 ```
 
-## テストの書き方
+## Writing Tests
 
-### ユニットテスト
+### Unit Tests
 
 ```go
 // internal/agent/president_test.go
@@ -273,11 +273,11 @@ func TestPresidentAgent_Process(t *testing.T) {
         t.Errorf("Expected no error, got %v", err)
     }
     
-    // アサーション
+    // Assertions
 }
 ```
 
-### テーブル駆動テスト
+### Table-Driven Tests
 
 ```go
 func TestSomething(t *testing.T) {
@@ -309,19 +309,19 @@ func TestSomething(t *testing.T) {
 }
 ```
 
-## プルリクエストのガイドライン
+## Pull Request Guidelines
 
-### ブランチ戦略
+### Branch Strategy
 
-- `main`: 本番ブランチ
-- `develop`: 開発ブランチ
-- `feature/*`: 機能追加ブランチ
-- `fix/*`: バグ修正ブランチ
-- `docs/*`: ドキュメント更新ブランチ
+- `main`: Production branch
+- `develop`: Development branch
+- `feature/*`: Feature addition branch
+- `fix/*`: Bug fix branch
+- `docs/*`: Documentation update branch
 
-### コミットメッセージ
+### Commit Messages
 
-Conventional Commitsに従う：
+Follow Conventional Commits:
 
 ```
 <type>(<scope>): <subject>
@@ -331,16 +331,16 @@ Conventional Commitsに従う：
 <footer>
 ```
 
-タイプ：
-- `feat`: 新機能
-- `fix`: バグ修正
-- `docs`: ドキュメント
-- `style`: コードスタイル
-- `refactor`: リファクタリング
-- `test`: テスト
-- `chore`: ビルド・設定等
+Types:
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation
+- `style`: Code style
+- `refactor`: Refactoring
+- `test`: Tests
+- `chore`: Build/configuration, etc.
 
-例：
+Example:
 ```
 feat(agent): Add LLM integration for president agent
 
@@ -350,53 +350,53 @@ Add retry logic and error handling.
 Closes #123
 ```
 
-### プルリクエストチェックリスト
+### Pull Request Checklist
 
-- [ ] コードがビルドできる
-- [ ] 全テストが通る
-- [ ] 新しいテストを追加した
-- [ ] ドキュメントを更新した
-- [ ] コミットメッセージが適切
-- [ ] コードレビューを受けた
+- [ ] Code builds successfully
+- [ ] All tests pass
+- [ ] Added new tests
+- [ ] Updated documentation
+- [ ] Commit messages are appropriate
+- [ ] Received code review
 
-## よくある問題と解決策
+## Common Issues and Solutions
 
-### 1. ビルドエラー: "cannot find package"
+### 1. Build Error: "cannot find package"
 
 ```bash
 make deps
 go mod tidy
 ```
 
-### 2. テストエラー: "no such file or directory"
+### 2. Test Error: "no such file or directory"
 
-パスが相対パスになっていないか確認：
+Check if the path is relative:
 
 ```go
-// 悪い例
+// Bad example
 os.ReadFile("config.yaml")
 
-// 良い例
+// Good example
 os.ReadFile("/absolute/path/config.yaml")
 ```
 
-### 3. Protocol Buffer生成エラー
+### 3. Protocol Buffer Generation Error
 
 ```bash
 make install-tools
 make proto
 ```
 
-## パフォーマンスプロファイリング
+## Performance Profiling
 
-### CPUプロファイル
+### CPU Profile
 
 ```bash
 go test -cpuprofile=cpu.prof -bench=.
 go tool pprof cpu.prof
 ```
 
-### メモリプロファイル
+### Memory Profile
 
 ```bash
 go test -memprofile=mem.prof -bench=.
@@ -405,7 +405,7 @@ go tool pprof mem.prof
 
 ## CI/CD
 
-### GitHub Actions (予定)
+### GitHub Actions (Planned)
 
 ```yaml
 # .github/workflows/test.yml
@@ -426,28 +426,28 @@ jobs:
       - run: make build
 ```
 
-## リリース
+## Release
 
-### バージョニング
+### Versioning
 
-Semantic Versioningに従う：`MAJOR.MINOR.PATCH`
+Follow Semantic Versioning: `MAJOR.MINOR.PATCH`
 
-### リリース手順
+### Release Process
 
-1. バージョンタグを作成
+1. Create version tag
    ```bash
    git tag -a v1.0.0 -m "Release v1.0.0"
    git push origin v1.0.0
    ```
 
-2. リリースノートを作成
+2. Create release notes
 
-3. バイナリをビルド
+3. Build binaries
    ```bash
    make build
    ```
 
-## 参考資料
+## References
 
 - [Go Documentation](https://golang.org/doc/)
 - [gRPC Go Tutorial](https://grpc.io/docs/languages/go/)
