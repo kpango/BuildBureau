@@ -51,7 +51,7 @@ Each level works with their secretary agent to document, research, and refine ta
 
 ### Prerequisites
 
-- Go 1.20 or later
+- Go 1.21 or later
 - (Optional) Slack Bot Token for notifications
 
 ### Installation

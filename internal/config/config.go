@@ -80,15 +80,10 @@ func Load(path string) (*Config, error) {
 	}
 
 	// Post-process environment variables that yaml didn't expand
-	cfg.LLM.APIKey = expandEnv(cfg.LLM.APIKey)
-	cfg.Slack.Token = expandEnv(cfg.Slack.Token)
+	cfg.LLM.APIKey = os.ExpandEnv(cfg.LLM.APIKey)
+	cfg.Slack.Token = os.ExpandEnv(cfg.Slack.Token)
 
 	return &cfg, nil
-}
-
-// expandEnv expands ${VAR} or $VAR in strings
-func expandEnv(s string) string {
-	return os.ExpandEnv(s)
 }
 
 // Default returns a default configuration

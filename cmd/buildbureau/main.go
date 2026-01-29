@@ -48,7 +48,8 @@ func main() {
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
 	// Start event processor
-	go processEvents(eventChan, slackNotifier)
+	eventDone := make(chan struct{})
+	go processEvents(eventChan, slackNotifier, eventDone)
 
 	// Start task processor
 	go processTasks(ctx, taskChan, agents.ceo)
@@ -66,8 +67,13 @@ func main() {
 
 	// Forward events to TUI
 	go func() {
-		for event := range eventChan {
-			program.Send(ui.EventMsg(event))
+		for {
+			select {
+			case event := <-eventChan:
+				program.Send(ui.EventMsg(event))
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
 
@@ -84,6 +90,10 @@ func main() {
 	}
 
 	// Cleanup
+	cancel()
+	close(eventChan)
+	<-eventDone
+
 	for _, a := range getAllAgents(agents) {
 		if err := a.Stop(); err != nil {
 			log.Printf("Error stopping agent %s: %v", a.Role(), err)
@@ -167,7 +177,8 @@ func getAllAgents(h *AgentHierarchy) []agent.Agent {
 }
 
 // processEvents handles agent events
-func processEvents(eventChan chan types.AgentEvent, notifier *slack.Notifier) {
+func processEvents(eventChan chan types.AgentEvent, notifier *slack.Notifier, done chan struct{}) {
+	defer close(done)
 	for event := range eventChan {
 		// Send to Slack if enabled
 		if notifier.IsEnabled() {

@@ -76,7 +76,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					Description: m.textarea.Value(),
 					CreatedAt:   time.Now(),
 					Status:      types.StatusPending,
-					CreatedBy:   "Client",
+					CreatedBy:   types.RoleClient,
 				}
 				m.taskChannel <- task
 				m.textarea.Reset()

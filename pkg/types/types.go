@@ -11,6 +11,7 @@ const (
 	RoleLead      AgentRole = "Lead"
 	RoleEmployee  AgentRole = "Employee"
 	RoleSecretary AgentRole = "Secretary"
+	RoleClient    AgentRole = "Client"
 )
 
 // Task represents a work item to be processed

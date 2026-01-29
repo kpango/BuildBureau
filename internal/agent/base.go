@@ -133,14 +133,6 @@ func (a *BaseAgent) EmitEvent(eventType types.EventType, message string, taskID 
 
 // SendMessage sends a message to another agent (basic implementation)
 func (a *BaseAgent) SendMessage(ctx context.Context, to types.AgentRole, content string) error {
-	_ = types.Message{
-		ID:        uuid.New().String(),
-		From:      a.role,
-		To:        to,
-		Content:   content,
-		Timestamp: time.Now(),
-	}
-
 	a.EmitEvent(types.EventMessage, fmt.Sprintf("Sending message to %s: %s", to, content), "")
 
 	// In a real implementation, this would route to the target agent
