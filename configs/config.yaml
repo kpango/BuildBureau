@@ -1,0 +1,205 @@
+# BuildBureau Configuration File
+# This file controls all aspects of the multi-agent AI system
+
+# Agent Hierarchy Configuration
+hierarchy:
+  # Number of departments (usually 1 for single department)
+  departments: 1
+  
+  # Number of managers per department
+  managers_per_department: 3
+  
+  # Specialties for each manager
+  manager_specialties:
+    - Frontend Development
+    - Backend Development
+    - Quality Assurance
+  
+  # Number of workers per manager
+  workers_per_manager: 2
+
+# Agent Configuration
+agents:
+  ceo:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are an experienced CEO of a software development company.
+      Your role is to:
+      - Negotiate with clients and understand their business requirements
+      - Clarify project scope and objectives
+      - Delegate projects to department heads with clear direction
+      Always keep the client's business goals in mind and ensure projects are well-defined before delegation.
+    tools: ["search", "calculator"]
+    temperature: 0.7
+  
+  ceo_secretary:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are the CEO's secretary.
+      Your responsibilities include:
+      - Recording all client communications and requirements
+      - Maintaining the knowledge base with project details
+      - Scheduling and coordinating between the CEO and department heads
+      - Sending notifications for important decisions
+      Be meticulous in documentation and ensure nothing is lost in translation.
+    tools: ["knowledge_base", "scheduler"]
+    temperature: 0.5
+  
+  dept_head:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are a department head overseeing multiple development teams.
+      Your responsibilities:
+      - Break down large projects into manageable task categories
+      - Assign categories to appropriate managers based on their specialties
+      - Coordinate research and technical planning
+      - Monitor overall department progress
+      Think strategically about task distribution and resource allocation.
+    tools: ["search", "research", "database"]
+    temperature: 0.7
+  
+  dept_head_secretary:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are the department head's secretary.
+      Your role includes:
+      - Reviewing and detailing requirements from the CEO
+      - Conducting technical research and information gathering
+      - Documenting task breakdowns and assignments
+      - Coordinating with manager secretaries
+      Ensure all technical details are thoroughly researched and documented.
+    tools: ["search", "knowledge_base", "research"]
+    temperature: 0.5
+  
+  manager:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are a software development manager specializing in your assigned area.
+      Your duties:
+      - Create detailed technical specifications and implementation plans
+      - Design step-by-step development workflows
+      - Assign specific tasks to your team of developers
+      - Review and ensure code quality
+      Focus on technical excellence and clear, actionable specifications.
+    tools: ["codeexecutor", "database", "git"]
+    temperature: 0.6
+  
+  manager_secretary:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are a manager's secretary specializing in technical documentation.
+      Your responsibilities:
+      - Perform detailed technical research on assigned tasks
+      - Assist in selecting appropriate technology stacks
+      - Document specifications and development plans
+      - Organize and maintain technical documentation in the knowledge base
+      Be thorough in research and precise in documentation.
+    tools: ["search", "knowledge_base", "documentation"]
+    temperature: 0.5
+  
+  worker:
+    model: "gemini-2.0-flash-exp"
+    instruction: |
+      You are a skilled software developer.
+      Your job is to:
+      - Implement assigned development tasks according to specifications
+      - Write clean, well-tested code
+      - Report completion and results to your manager
+      - Follow coding best practices
+      Focus on quality implementation and clear communication of your work.
+    tools: ["codeexecutor", "testing", "git"]
+    temperature: 0.6
+
+# Slack Integration Configuration
+slack:
+  enabled: true
+  token: "${SLACK_BOT_TOKEN}"  # Can use environment variable
+  
+  # Channel mappings for different notification types
+  channels:
+    main: "${SLACK_CHANNEL_MAIN}"  # Main project updates channel
+    management: "${SLACK_CHANNEL_MANAGEMENT}"  # For CEO/DeptHead notifications
+    development: "${SLACK_CHANNEL_DEV}"  # For technical team updates
+    errors: "${SLACK_CHANNEL_ERRORS}"  # For error notifications
+  
+  # Event notification configuration
+  notify_on:
+    task_assigned:
+      enabled: true
+      roles: ["CEO", "DeptHead", "Manager"]
+      channel: "main"
+    
+    task_completed:
+      enabled: true
+      roles: ["Manager", "Worker"]
+      channel: "development"
+    
+    project_started:
+      enabled: true
+      roles: ["CEO"]
+      channel: "management"
+    
+    project_completed:
+      enabled: true
+      roles: ["CEO"]
+      channel: "main"
+    
+    error_occurred:
+      enabled: true
+      roles: ["CEO", "DeptHead", "Manager", "Worker"]
+      channel: "errors"
+    
+    milestone_reached:
+      enabled: true
+      roles: ["DeptHead", "Manager"]
+      channel: "main"
+  
+  # Message formatting options
+  message_format:
+    prefix: "[BuildBureau]"
+    include_timestamp: true
+    include_agent_name: true
+    use_threads: true  # Use threads for related notifications
+
+# System Configuration
+system:
+  # Logging configuration
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARN, ERROR
+    output: "stdout"
+    file: "logs/buildbureau.log"
+    enable_file_logging: true
+  
+  # API Keys and credentials (prefer environment variables)
+  api_keys:
+    gemini: "${GOOGLE_API_KEY}"
+    search: "${GOOGLE_SEARCH_API_KEY}"
+  
+  # gRPC configuration
+  grpc:
+    host: "localhost"
+    port: 50051
+    enable_reflection: true
+  
+  # Timeout and retry settings
+  timeouts:
+    agent_response_seconds: 300
+    task_execution_seconds: 600
+    max_retries: 3
+    retry_backoff_seconds: 5
+  
+  # Knowledge base configuration
+  knowledge_base:
+    type: "file"  # file, database, or memory
+    path: "data/knowledge_base"
+    enable_versioning: true
+  
+  # UI Configuration
+  ui:
+    enabled: true
+    theme: "default"  # default, dark, light
+    update_interval_ms: 100
+    show_agent_hierarchy: true
+    enable_colors: true
+    language: "ja"  # ja for Japanese, en for English
+    max_history_lines: 1000

@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package buildbureau;
+
+option go_package = "github.com/kpango/BuildBureau/internal/grpc/pb";
+
+// Common message types
+message Task {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string priority = 4;
+  map<string, string> metadata = 5;
+}
+
+message TaskResult {
+  string task_id = 1;
+  bool success = 2;
+  string output = 3;
+  string error = 4;
+  map<string, string> artifacts = 5;
+}
+
+// CEO Service - Handles client negotiations and project initiation
+service CEOService {
+  rpc NegotiateRequest(ClientRequest) returns (ProjectOutline);
+  rpc GetProjectStatus(ProjectStatusRequest) returns (ProjectStatus);
+}
+
+message ClientRequest {
+  string client_id = 1;
+  string request_content = 2;
+  repeated string requirements = 3;
+}
+
+message ProjectOutline {
+  string project_id = 1;
+  string title = 2;
+  string summary = 3;
+  repeated Task tasks = 4;
+}
+
+message ProjectStatusRequest {
+  string project_id = 1;
+}
+
+message ProjectStatus {
+  string project_id = 1;
+  string status = 2;
+  float completion_percentage = 3;
+  string current_phase = 4;
+}
+
+// Department Head Service - Breaks down projects into major tasks
+service DeptHeadService {
+  rpc PlanTasks(ProjectOutline) returns (TaskPlan);
+  rpc GetDepartmentStatus(DepartmentStatusRequest) returns (DepartmentStatus);
+}
+
+message TaskPlan {
+  string project_id = 1;
+  repeated CategoryTask category_tasks = 2;
+}
+
+message CategoryTask {
+  string category = 1;
+  string assigned_manager = 2;
+  repeated Task tasks = 3;
+}
+
+message DepartmentStatusRequest {
+  string department_id = 1;
+}
+
+message DepartmentStatus {
+  string department_id = 1;
+  int32 active_tasks = 2;
+  int32 completed_tasks = 3;
+}
+
+// Manager Service - Creates detailed technical specifications
+service ManagerService {
+  rpc DevelopPlan(CategoryTask) returns (TechnicalSpec);
+  rpc AssignTasks(TechnicalSpec) returns (TaskAssignments);
+  rpc GetManagerStatus(ManagerStatusRequest) returns (ManagerStatus);
+}
+
+message TechnicalSpec {
+  string task_id = 1;
+  string specification = 2;
+  repeated string technologies = 3;
+  repeated Step implementation_steps = 4;
+}
+
+message Step {
+  int32 order = 1;
+  string description = 2;
+  string assignee = 3;
+}
+
+message TaskAssignments {
+  repeated WorkerTask worker_tasks = 1;
+}
+
+message WorkerTask {
+  string worker_id = 1;
+  Task task = 2;
+  TechnicalSpec spec = 3;
+}
+
+message ManagerStatusRequest {
+  string manager_id = 1;
+}
+
+message ManagerStatus {
+  string manager_id = 1;
+  string specialty = 2;
+  int32 active_workers = 3;
+}
+
+// Worker Service - Executes development tasks
+service WorkerService {
+  rpc ExecuteTask(WorkerTask) returns (TaskResult);
+  rpc GetWorkerStatus(WorkerStatusRequest) returns (WorkerStatus);
+}
+
+message WorkerStatusRequest {
+  string worker_id = 1;
+}
+
+message WorkerStatus {
+  string worker_id = 1;
+  string current_task_id = 2;
+  bool is_busy = 3;
+}
