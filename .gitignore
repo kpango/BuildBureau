@@ -9,7 +9,7 @@
 *.dylib
 
 # BuildBureau binary
-buildbureau
+/buildbureau
 
 # Test binary, built with `go test -c`
 *.test
