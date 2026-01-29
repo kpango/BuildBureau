@@ -21,12 +21,12 @@ type Notifier struct {
 type EventType string
 
 const (
-	EventTaskAssigned      EventType = "task_assigned"
-	EventTaskCompleted     EventType = "task_completed"
-	EventProjectStarted    EventType = "project_started"
-	EventProjectCompleted  EventType = "project_completed"
-	EventErrorOccurred     EventType = "error_occurred"
-	EventMilestoneReached  EventType = "milestone_reached"
+	EventTaskAssigned     EventType = "task_assigned"
+	EventTaskCompleted    EventType = "task_completed"
+	EventProjectStarted   EventType = "project_started"
+	EventProjectCompleted EventType = "project_completed"
+	EventErrorOccurred    EventType = "error_occurred"
+	EventMilestoneReached EventType = "milestone_reached"
 )
 
 // NotificationPayload contains information about an event to notify

@@ -15,26 +15,26 @@ import (
 type AgentRole string
 
 const (
-	RoleCEO            AgentRole = "CEO"
-	RoleCEOSecretary   AgentRole = "CEOSecretary"
-	RoleDeptHead       AgentRole = "DeptHead"
+	RoleCEO               AgentRole = "CEO"
+	RoleCEOSecretary      AgentRole = "CEOSecretary"
+	RoleDeptHead          AgentRole = "DeptHead"
 	RoleDeptHeadSecretary AgentRole = "DeptHeadSecretary"
-	RoleManager        AgentRole = "Manager"
-	RoleManagerSecretary AgentRole = "ManagerSecretary"
-	RoleWorker         AgentRole = "Worker"
+	RoleManager           AgentRole = "Manager"
+	RoleManagerSecretary  AgentRole = "ManagerSecretary"
+	RoleWorker            AgentRole = "Worker"
 )
 
 // Agent represents a single AI agent
 type Agent struct {
-	ID          string
-	Role        AgentRole
-	Name        string
-	Specialty   string
-	Config      config.AgentConfig
-	Client      *genai.Client
-	Notifier    *slack.Notifier
-	Logger      *log.Logger
-	SubAgents   []*Agent
+	ID        string
+	Role      AgentRole
+	Name      string
+	Specialty string
+	Config    config.AgentConfig
+	Client    *genai.Client
+	Notifier  *slack.Notifier
+	Logger    *log.Logger
+	SubAgents []*Agent
 }
 
 // AgentSystem manages the entire multi-agent hierarchy
@@ -50,19 +50,19 @@ type AgentSystem struct {
 
 // Department represents a department with its agents
 type Department struct {
-	ID              string
-	DeptHeadAgent   *Agent
+	ID                string
+	DeptHeadAgent     *Agent
 	DeptHeadSecretary *Agent
-	Managers        []*Manager
+	Managers          []*Manager
 }
 
 // Manager represents a manager with their team
 type Manager struct {
-	ID              string
-	ManagerAgent    *Agent
+	ID               string
+	ManagerAgent     *Agent
 	ManagerSecretary *Agent
-	Specialty       string
-	Workers         []*Agent
+	Specialty        string
+	Workers          []*Agent
 }
 
 // NewAgentSystem creates a new multi-agent system based on configuration

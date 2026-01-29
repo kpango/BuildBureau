@@ -10,10 +10,10 @@ import (
 
 // Config represents the complete BuildBureau configuration
 type Config struct {
-	Hierarchy HierarchyConfig         `yaml:"hierarchy"`
-	Agents    map[string]AgentConfig  `yaml:"agents"`
-	Slack     SlackConfig             `yaml:"slack"`
-	System    SystemConfig            `yaml:"system"`
+	Hierarchy HierarchyConfig        `yaml:"hierarchy"`
+	Agents    map[string]AgentConfig `yaml:"agents"`
+	Slack     SlackConfig            `yaml:"slack"`
+	System    SystemConfig           `yaml:"system"`
 }
 
 // HierarchyConfig defines the organizational structure
@@ -34,11 +34,11 @@ type AgentConfig struct {
 
 // SlackConfig defines Slack integration settings
 type SlackConfig struct {
-	Enabled       bool                       `yaml:"enabled"`
-	Token         string                     `yaml:"token"`
-	Channels      SlackChannels              `yaml:"channels"`
-	NotifyOn      map[string]NotifyConfig    `yaml:"notify_on"`
-	MessageFormat MessageFormatConfig        `yaml:"message_format"`
+	Enabled       bool                    `yaml:"enabled"`
+	Token         string                  `yaml:"token"`
+	Channels      SlackChannels           `yaml:"channels"`
+	NotifyOn      map[string]NotifyConfig `yaml:"notify_on"`
+	MessageFormat MessageFormatConfig     `yaml:"message_format"`
 }
 
 // SlackChannels defines channel mappings
@@ -97,10 +97,10 @@ type GRPCConfig struct {
 
 // TimeoutsConfig defines timeout settings
 type TimeoutsConfig struct {
-	AgentResponseSeconds  int `yaml:"agent_response_seconds"`
-	TaskExecutionSeconds  int `yaml:"task_execution_seconds"`
-	MaxRetries            int `yaml:"max_retries"`
-	RetryBackoffSeconds   int `yaml:"retry_backoff_seconds"`
+	AgentResponseSeconds int `yaml:"agent_response_seconds"`
+	TaskExecutionSeconds int `yaml:"task_execution_seconds"`
+	MaxRetries           int `yaml:"max_retries"`
+	RetryBackoffSeconds  int `yaml:"retry_backoff_seconds"`
 }
 
 // KnowledgeBaseConfig defines knowledge base settings

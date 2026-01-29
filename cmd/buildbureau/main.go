@@ -38,7 +38,7 @@ func main() {
 	if cfg.System.Logging.EnableFileLogging {
 		// Create logs directory if it doesn't exist
 		os.MkdirAll("logs", 0755)
-		
+
 		logFile, err := os.OpenFile(cfg.System.Logging.File, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			logger.Printf("Warning: Failed to open log file: %v\n", err)
@@ -96,14 +96,14 @@ func main() {
 	// Create a handler for user input
 	handleInput := func(input string) error {
 		logger.Printf("Processing user input: %s\n", input)
-		
+
 		// Process the request through the agent system
 		response, err := agentSystem.ProcessClientRequest(ctx, "client-1", input)
 		if err != nil {
 			logger.Printf("Error processing request: %v\n", err)
 			return err
 		}
-		
+
 		logger.Printf("Request processed successfully: %s\n", response)
 		return nil
 	}

@@ -14,15 +14,15 @@ import (
 
 // Model represents the UI model
 type Model struct {
-	config       *config.Config
-	viewport     viewport.Model
-	textarea     textarea.Model
-	messages     []Message
-	ready        bool
-	width        int
-	height       int
-	inputMode    bool
-	onSubmit     func(string) error
+	config    *config.Config
+	viewport  viewport.Model
+	textarea  textarea.Model
+	messages  []Message
+	ready     bool
+	width     int
+	height    int
+	inputMode bool
+	onSubmit  func(string) error
 }
 
 // Message represents a message in the conversation
@@ -247,7 +247,7 @@ func (m Model) renderMessage(msg Message) string {
 
 	timestamp := timestampStyle.Render(msg.Timestamp.Format("15:04:05"))
 	agentName := roleStyle.Render(msg.Agent)
-	
+
 	// Wrap content if too long
 	content := msg.Content
 	if len(content) > 100 {
@@ -260,7 +260,7 @@ func (m Model) renderMessage(msg Message) string {
 // AddMessage adds a message to the UI
 func (m *Model) AddMessage(msg Message) {
 	m.messages = append(m.messages, msg)
-	
+
 	// Limit history
 	maxLines := m.config.System.UI.MaxHistoryLines
 	if len(m.messages) > maxLines {
