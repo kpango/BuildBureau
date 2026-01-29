@@ -1,55 +1,55 @@
 # Configuration Guide
 
-BuildBureauの詳細な設定ガイド
+Detailed configuration guide for BuildBureau
 
-## 設定ファイルの構造
+## Configuration File Structure
 
-BuildBureauは`config.yaml`で全ての設定を管理します。
+BuildBureau manages all settings in `config.yaml`.
 
-## エージェント設定 (agents)
+## Agent Configuration (agents)
 
-各エージェント種別ごとに以下のパラメータを設定できます：
+You can configure the following parameters for each agent type:
 
-### 共通パラメータ
+### Common Parameters
 
 ```yaml
 agents:
   <agent_type>:
-    count: <number>           # エージェント数
-    model: <string>           # 使用するLLMモデル名
-    instruction: <string>     # システムプロンプト
-    allowTools: <boolean>     # ツール使用許可
-    tools: [<strings>]        # 使用可能なツールリスト
-    timeout: <seconds>        # タイムアウト時間
-    retryCount: <number>      # リトライ回数
+    count: <number>           # Number of agents
+    model: <string>           # LLM model name to use
+    instruction: <string>     # System prompt
+    allowTools: <boolean>     # Allow tool usage
+    tools: [<strings>]        # List of available tools
+    timeout: <seconds>        # Timeout duration
+    retryCount: <number>      # Number of retries
 ```
 
-### エージェント種別
+### Agent Types
 
-#### 1. president (社長)
+#### 1. president (President)
 ```yaml
 president:
   count: 1
   model: "gemini-2.0-flash-exp"
   instruction: |
-    あなたは社長としてプロジェクト全体を俯瞰し方針を決定する立場です。
-    クライアントからの要求を理解し、プロジェクト全体の計画を立案してください。
+    You are the president who oversees the entire project and makes strategic decisions.
+    Understand the client's requirements and create an overall project plan.
   allowTools: true
   tools:
-    - web_search      # Web検索
-    - knowledge_base  # ナレッジベースアクセス
+    - web_search      # Web search
+    - knowledge_base  # Knowledge base access
   timeout: 120
   retryCount: 3
 ```
 
-#### 2. president_secretary (社長秘書)
+#### 2. president_secretary (President's Secretary)
 ```yaml
 president_secretary:
   count: 1
   model: "gemini-2.0-flash-exp"
   instruction: |
-    あなたは社長の秘書です。社長の指示を受けて要件を記録し、
-    社内ナレッジベースを更新してください。
+    You are the president's secretary. Record requirements based on the president's instructions,
+    and update the internal knowledge base.
   allowTools: true
   tools:
     - knowledge_base
@@ -58,13 +58,13 @@ president_secretary:
   retryCount: 3
 ```
 
-#### 3. department_manager (部長)
+#### 3. department_manager (Department Manager)
 ```yaml
 department_manager:
   count: 1
   model: "gemini-2.0-flash-exp"
   instruction: |
-    あなたは部長としてプロジェクト全体を課長単位に分割する責任者です。
+    You are the department manager responsible for dividing the entire project into section manager units.
   allowTools: true
   tools:
     - web_search
@@ -73,13 +73,13 @@ department_manager:
   retryCount: 3
 ```
 
-#### 4. section_manager (課長)
+#### 4. section_manager (Section Manager)
 ```yaml
 section_manager:
-  count: 3  # 複数人配置可能
+  count: 3  # Multiple assignments possible
   model: "gemini-2.0-flash-exp"
   instruction: |
-    あなたは課長として詳細な実装計画と最終仕様書を策定する責任者です。
+    You are the section manager responsible for creating detailed implementation plans and final specifications.
   allowTools: true
   tools:
     - code_analyzer
@@ -88,13 +88,13 @@ section_manager:
   retryCount: 3
 ```
 
-#### 5. employee (平社員)
+#### 5. employee (Employee)
 ```yaml
 employee:
-  count: 6  # 複数人配置可能
+  count: 6  # Multiple assignments possible
   model: "gemini-2.0-flash-exp"
   instruction: |
-    あなたは与えられた仕様に基づき実装を行うエンジニアです。
+    You are an engineer who implements based on given specifications.
   allowTools: true
   tools:
     - code_execution
@@ -104,191 +104,191 @@ employee:
   retryCount: 3
 ```
 
-## LLM設定 (llm)
+## LLM Configuration (llm)
 
 ```yaml
 llm:
-  provider: "google"                                    # プロバイダー名
-  apiEndpoint: "https://generativelanguage.googleapis.com"  # APIエンドポイント
-  defaultModel: "gemini-2.0-flash-exp"                 # デフォルトモデル
-  maxTokens: 8192                                       # 最大トークン数
-  temperature: 0.7                                      # 温度パラメータ (0.0-1.0)
-  topP: 0.95                                           # Top-Pサンプリング
+  provider: "google"                                    # Provider name
+  apiEndpoint: "https://generativelanguage.googleapis.com"  # API endpoint
+  defaultModel: "gemini-2.0-flash-exp"                 # Default model
+  maxTokens: 8192                                       # Maximum tokens
+  temperature: 0.7                                      # Temperature parameter (0.0-1.0)
+  topP: 0.95                                           # Top-P sampling
 ```
 
-### プロバイダー設定
+### Provider Configuration
 
-現在サポート予定のプロバイダー：
+Currently planned supported providers:
 - `google`: Google AI (Gemini)
-- `openai`: OpenAI (GPT-4など)
+- `openai`: OpenAI (GPT-4, etc.)
 - `anthropic`: Anthropic (Claude)
 
-### モデル選択
+### Model Selection
 
-推奨モデル：
-- 高速処理: `gemini-2.0-flash-exp`
-- 高品質: `gemini-2.5-pro`
-- バランス: `gemini-2.0-flash-exp`
+Recommended models:
+- High-speed processing: `gemini-2.0-flash-exp`
+- High quality: `gemini-2.5-pro`
+- Balanced: `gemini-2.0-flash-exp`
 
-## gRPC設定 (grpc)
+## gRPC Configuration (grpc)
 
 ```yaml
 grpc:
-  port: 50051                  # gRPCサーバーポート
-  maxMessageSize: 10485760     # 最大メッセージサイズ (バイト)
-  timeout: 300                 # タイムアウト (秒)
-  enableReflection: true       # リフレクション有効化
+  port: 50051                  # gRPC server port
+  maxMessageSize: 10485760     # Maximum message size (bytes)
+  timeout: 300                 # Timeout (seconds)
+  enableReflection: true       # Enable reflection
 ```
 
-### ポート設定
+### Port Configuration
 
-- デフォルト: `50051`
-- ファイアウォールでこのポートを開放する必要がある場合があります
+- Default: `50051`
+- You may need to open this port in your firewall
 
-### メッセージサイズ
+### Message Size
 
-- デフォルト: 10MB
-- 大きなファイルを扱う場合は増やす
+- Default: 10MB
+- Increase this when handling large files
 
-## Slack通知設定 (slack)
+## Slack Notification Configuration (slack)
 
 ```yaml
 slack:
-  enabled: true                      # Slack通知の有効化
-  token: "${SLACK_BOT_TOKEN}"        # Botトークン (環境変数)
-  channelID: "${SLACK_CHANNEL_ID}"   # チャンネルID (環境変数)
-  retryCount: 3                      # リトライ回数
-  timeout: 10                        # タイムアウト (秒)
+  enabled: true                      # Enable Slack notifications
+  token: "${SLACK_BOT_TOKEN}"        # Bot token (environment variable)
+  channelID: "${SLACK_CHANNEL_ID}"   # Channel ID (environment variable)
+  retryCount: 3                      # Number of retries
+  timeout: 10                        # Timeout (seconds)
   
   notifications:
     projectStart:
       enabled: true
-      message: "🚀 プロジェクト「{{.ProjectName}}」が開始されました"
+      message: "🚀 Project \"{{.ProjectName}}\" has started"
     
     taskComplete:
       enabled: true
-      message: "✅ タスク「{{.TaskName}}」が完了しました ({{.Agent}})"
+      message: "✅ Task \"{{.TaskName}}\" has been completed ({{.Agent}})"
     
     error:
       enabled: true
-      message: "❌ エラーが発生しました: {{.ErrorMessage}} ({{.Agent}})"
+      message: "❌ An error occurred: {{.ErrorMessage}} ({{.Agent}})"
     
     projectComplete:
       enabled: true
-      message: "🎉 プロジェクト「{{.ProjectName}}」が完了しました！"
+      message: "🎉 Project \"{{.ProjectName}}\" has been completed!"
 ```
 
-### Slack Bot設定手順
+### Slack Bot Setup Instructions
 
-1. [Slack API](https://api.slack.com/apps)でアプリを作成
-2. Bot Token Scopesに以下を追加：
+1. Create an app at [Slack API](https://api.slack.com/apps)
+2. Add the following to Bot Token Scopes:
    - `chat:write`
    - `chat:write.public`
-3. ワークスペースにインストール
-4. Bot User OAuth Tokenを取得
-5. 環境変数に設定：
+3. Install to workspace
+4. Obtain Bot User OAuth Token
+5. Set environment variables:
    ```bash
    export SLACK_BOT_TOKEN="xoxb-your-token"
    export SLACK_CHANNEL_ID="C01234567"
    ```
 
-### メッセージテンプレート
+### Message Templates
 
-利用可能な変数：
-- `{{.ProjectName}}`: プロジェクト名
-- `{{.TaskName}}`: タスク名
-- `{{.Agent}}`: エージェントID
-- `{{.ErrorMessage}}`: エラーメッセージ
-- `{{.Timestamp}}`: タイムスタンプ
+Available variables:
+- `{{.ProjectName}}`: Project name
+- `{{.TaskName}}`: Task name
+- `{{.Agent}}`: Agent ID
+- `{{.ErrorMessage}}`: Error message
+- `{{.Timestamp}}`: Timestamp
 
-## UI設定 (ui)
+## UI Configuration (ui)
 
 ```yaml
 ui:
-  enableTUI: true        # Terminal UIの有効化
-  refreshRate: 100       # 更新間隔 (ミリ秒)
-  theme: "default"       # テーマ
-  showProgress: true     # プログレス表示
-  logLevel: "info"       # ログレベル
+  enableTUI: true        # Enable Terminal UI
+  refreshRate: 100       # Refresh interval (milliseconds)
+  theme: "default"       # Theme
+  showProgress: true     # Show progress
+  logLevel: "info"       # Log level
 ```
 
-### ログレベル
+### Log Levels
 
-- `debug`: デバッグ情報を含む全てのログ
-- `info`: 通常の情報ログ
-- `warn`: 警告のみ
-- `error`: エラーのみ
+- `debug`: All logs including debug information
+- `info`: Normal information logs
+- `warn`: Warnings only
+- `error`: Errors only
 
-### テーマ
+### Themes
 
-現在利用可能なテーマ：
-- `default`: デフォルトテーマ
+Currently available themes:
+- `default`: Default theme
 
-## システム設定 (system)
+## System Configuration (system)
 
 ```yaml
 system:
-  workDir: "./work"              # 作業ディレクトリ
-  logDir: "./logs"               # ログディレクトリ
-  cacheDir: "./cache"            # キャッシュディレクトリ
-  maxConcurrentTasks: 10         # 同時実行タスク数
-  globalTimeout: 3600            # グローバルタイムアウト (秒)
+  workDir: "./work"              # Working directory
+  logDir: "./logs"               # Log directory
+  cacheDir: "./cache"            # Cache directory
+  maxConcurrentTasks: 10         # Maximum concurrent tasks
+  globalTimeout: 3600            # Global timeout (seconds)
 ```
 
-### ディレクトリ構造
+### Directory Structure
 
 ```
 BuildBureau/
-├── work/      # 作業用一時ファイル
-├── logs/      # ログファイル
-└── cache/     # キャッシュファイル
+├── work/      # Temporary working files
+├── logs/      # Log files
+└── cache/     # Cache files
 ```
 
-## 環境変数
+## Environment Variables
 
-### 必須環境変数
+### Required Environment Variables
 
-Slack通知を使用する場合：
+When using Slack notifications:
 ```bash
 export SLACK_BOT_TOKEN="xoxb-..."
 export SLACK_CHANNEL_ID="C..."
 ```
 
-Google AI APIを使用する場合：
+When using Google AI API:
 ```bash
 export GOOGLE_AI_API_KEY="..."
 ```
 
-### オプション環境変数
+### Optional Environment Variables
 
 ```bash
-# カスタム設定ファイルパス
+# Custom configuration file path
 export CONFIG_PATH="/path/to/custom/config.yaml"
 
-# ログレベルの上書き
+# Override log level
 export LOG_LEVEL="debug"
 ```
 
-## 設定例
+## Configuration Examples
 
-### 開発環境用設定
+### Development Environment Configuration
 
 ```yaml
 agents:
   president:
     count: 1
     timeout: 60
-  # ... 他のエージェント（タイムアウトを短く）
+  # ... other agents (with shorter timeouts)
 
 slack:
-  enabled: false  # 開発時は通知無効化
+  enabled: false  # Disable notifications during development
 
 ui:
   enableTUI: true
-  logLevel: "debug"  # デバッグログ有効
+  logLevel: "debug"  # Enable debug logs
 ```
 
-### 本番環境用設定
+### Production Environment Configuration
 
 ```yaml
 agents:
@@ -296,21 +296,21 @@ agents:
     count: 1
     timeout: 180
   section_manager:
-    count: 5  # スケールアップ
+    count: 5  # Scale up
   employee:
-    count: 20  # スケールアップ
+    count: 20  # Scale up
 
 slack:
-  enabled: true  # 通知有効化
+  enabled: true  # Enable notifications
 
 system:
-  maxConcurrentTasks: 20  # 並列度向上
+  maxConcurrentTasks: 20  # Increase parallelism
 
 ui:
-  logLevel: "info"  # 情報ログのみ
+  logLevel: "info"  # Information logs only
 ```
 
-### 高負荷環境用設定
+### High-Load Environment Configuration
 
 ```yaml
 grpc:
@@ -318,7 +318,7 @@ grpc:
 
 system:
   maxConcurrentTasks: 50
-  globalTimeout: 7200  # 2時間
+  globalTimeout: 7200  # 2 hours
 
 agents:
   employee:
@@ -326,46 +326,46 @@ agents:
     timeout: 300
 ```
 
-## トラブルシューティング
+## Troubleshooting
 
-### 設定ファイルのバリデーション
+### Configuration File Validation
 
-設定ファイルの構文チェック：
+Check configuration file syntax:
 ```bash
-# YAML構文チェック
+# YAML syntax check
 yamllint config.yaml
 
-# BuildBureauで検証
-./bin/buildbureau --validate-config  # (未実装)
+# Validate with BuildBureau
+./bin/buildbureau --validate-config  # (not yet implemented)
 ```
 
-### よくあるエラー
+### Common Errors
 
 1. **"failed to load config"**
-   - YAMLの構文エラーをチェック
-   - インデントが正しいか確認
+   - Check for YAML syntax errors
+   - Verify that indentation is correct
 
 2. **"Slack token is required"**
-   - 環境変数 `SLACK_BOT_TOKEN` を設定
-   - `slack.enabled: false` にする
+   - Set the `SLACK_BOT_TOKEN` environment variable
+   - Or set `slack.enabled: false`
 
 3. **"president agent count must be at least 1"**
-   - 必須エージェントのカウントを確認
+   - Check the count of required agents
 
-## ベストプラクティス
+## Best Practices
 
-1. **機密情報の管理**
-   - トークンは環境変数で管理
-   - `.env`ファイルを`.gitignore`に追加
+1. **Sensitive Information Management**
+   - Manage tokens via environment variables
+   - Add `.env` file to `.gitignore`
 
-2. **タイムアウト設定**
-   - エージェントの役割に応じて適切に設定
-   - 実装を伴う作業は長めに設定
+2. **Timeout Configuration**
+   - Set appropriately according to agent roles
+   - Set longer timeouts for tasks involving implementation
 
-3. **リトライ回数**
-   - ネットワーク不安定な環境では多めに設定
-   - 無限ループを避けるため上限を設ける
+3. **Retry Count**
+   - Set higher in unstable network environments
+   - Set an upper limit to avoid infinite loops
 
-4. **ログレベル**
-   - 開発時は`debug`
-   - 本番時は`info`または`warn`
+4. **Log Level**
+   - Use `debug` during development
+   - Use `info` or `warn` in production
