@@ -1,286 +1,286 @@
 # BuildBureau Architecture Documentation
 
-## システムアーキテクチャ
+## System Architecture
 
-BuildBureauは階層型マルチエージェントシステムで、企業組織の構造を模倣した設計になっています。
+BuildBureau is a hierarchical multi-agent system designed to mimic the structure of a corporate organization.
 
-### 階層構造
+### Hierarchical Structure
 
 ```
 ┌─────────────────────────────────────────────┐
-│           クライアント (利用者)              │
+│             Client (User)                   │
 └────────────────┬────────────────────────────┘
                  │
 ┌────────────────▼────────────────────────────┐
-│          社長エージェント                   │
-│        + 社長秘書エージェント               │
-│  (全体計画立案・要件整理)                  │
+│          President Agent                    │
+│        + President Secretary Agent          │
+│  (Overall planning & requirements)          │
 └────────────────┬────────────────────────────┘
                  │
 ┌────────────────▼────────────────────────────┐
-│         部長エージェント                    │
-│        + 部長秘書エージェント               │
-│  (タスク分割・課長への割り当て)            │
+│       Department Manager Agent              │
+│      + Department Secretary Agent           │
+│  (Task division & assignment to sections)   │
 └────────────────┬────────────────────────────┘
                  │
 ┌────────────────▼────────────────────────────┐
-│        課長エージェント × N                │
-│       + 課長秘書エージェント × N            │
-│  (実装計画策定・平社員への指示)            │
+│      Section Manager Agent × N              │
+│     + Section Secretary Agent × N           │
+│  (Implementation planning & instructions)   │
 └────────────────┬────────────────────────────┘
                  │
 ┌────────────────▼────────────────────────────┐
-│        平社員エージェント × M              │
-│  (実際の実装・成果物作成)                  │
+│        Employee Agent × M                   │
+│  (Actual implementation & deliverables)     │
 └─────────────────────────────────────────────┘
 ```
 
-## コンポーネント詳細
+## Component Details
 
-### 1. エージェント層
+### 1. Agent Layer
 
-#### 社長エージェント (President Agent)
-- **役割**: プロジェクト全体の計画立案と要件整理
-- **入力**: クライアントからの要件仕様
-- **出力**: タスクリスト（部長層への指示）
-- **機能**:
-  - 要件の分析と理解
-  - プロジェクト全体計画の策定
-  - タスクの優先順位付け
-  - 全体進捗の監視
+#### President Agent
+- **Role**: Overall project planning and requirements organization
+- **Input**: Requirement specifications from client
+- **Output**: Task list (instructions to department manager)
+- **Functions**:
+  - Requirements analysis and understanding
+  - Overall project planning
+  - Task prioritization
+  - Overall progress monitoring
 
-#### 社長秘書エージェント (President Secretary Agent)
-- **役割**: 社長のサポートと要件詳細化
-- **機能**:
-  - 要件のドキュメント化
-  - ナレッジベースの更新
-  - タスクの詳細化
-  - 部長秘書への引き継ぎ
+#### President Secretary Agent
+- **Role**: Support for president and requirements detailing
+- **Functions**:
+  - Requirements documentation
+  - Knowledge base updates
+  - Task detailing
+  - Handoff to department secretary
 
-#### 部長エージェント (Department Manager Agent)
-- **役割**: タスクを課長単位に分割
-- **入力**: 社長からのタスクリスト
-- **出力**: セクションタスクプラン
-- **機能**:
-  - タスクの技術的分析
-  - 課長への適切な割り当て
-  - 課題の調整と優先順位付け
+#### Department Manager Agent
+- **Role**: Divide tasks into section units
+- **Input**: Task list from president
+- **Output**: Section task plan
+- **Functions**:
+  - Technical analysis of tasks
+  - Appropriate assignment to section managers
+  - Issue coordination and prioritization
 
-#### 部長秘書エージェント (Department Secretary Agent)
-- **役割**: タスクの詳細化とリサーチ
-- **機能**:
-  - タスクの技術調査
-  - 関連情報の収集
-  - 課長秘書との調整
+#### Department Secretary Agent
+- **Role**: Task detailing and research
+- **Functions**:
+  - Technical research on tasks
+  - Collection of related information
+  - Coordination with section secretaries
 
-#### 課長エージェント (Section Manager Agent) × N
-- **役割**: 実装計画と仕様書の策定
-- **入力**: セクションタスク
-- **出力**: 実装仕様書
-- **機能**:
-  - 詳細な実装計画の作成
-  - 平社員への作業割り当て
-  - 実装結果のレビュー
+#### Section Manager Agent × N
+- **Role**: Implementation planning and specification creation
+- **Input**: Section tasks
+- **Output**: Implementation specifications
+- **Functions**:
+  - Creation of detailed implementation plans
+  - Work assignment to employees
+  - Review of implementation results
 
-#### 課長秘書エージェント (Section Secretary Agent) × N
-- **役割**: 実装手順のドラフト作成
-- **機能**:
-  - 仕様の詰め
-  - 他課長秘書との調整
-  - 実装手順書の作成
+#### Section Secretary Agent × N
+- **Role**: Draft creation of implementation procedures
+- **Functions**:
+  - Specification refinement
+  - Coordination with other section secretaries
+  - Creation of implementation procedure documents
 
-#### 平社員エージェント (Employee Agent) × M
-- **役割**: 実際の実装作業
-- **入力**: 実装仕様書
-- **出力**: 成果物（コード、ドキュメント等）
-- **機能**:
-  - コーディング
-  - ドキュメント作成
-  - テスト実行
+#### Employee Agent × M
+- **Role**: Actual implementation work
+- **Input**: Implementation specifications
+- **Output**: Deliverables (code, documents, etc.)
+- **Functions**:
+  - Coding
+  - Document creation
+  - Test execution
 
-### 2. 通信層 (gRPC)
+### 2. Communication Layer (gRPC)
 
-#### Protocol Buffers定義
+#### Protocol Buffers Definition
 
-すべてのサービスは`proto/buildbureau/v1/service.proto`で定義されています。
+All services are defined in `proto/buildbureau/v1/service.proto`.
 
-主要なメッセージ型:
-- `RequirementSpec`: プロジェクト要件
-- `TaskUnit`: 個別タスク
-- `TaskList`: タスクのリスト
-- `SectionTask`: セクションごとのタスク
-- `ImplementationSpec`: 実装仕様
-- `ResultArtifact`: 実行結果
+Main message types:
+- `RequirementSpec`: Project requirements
+- `TaskUnit`: Individual task
+- `TaskList`: List of tasks
+- `SectionTask`: Task per section
+- `ImplementationSpec`: Implementation specification
+- `ResultArtifact`: Execution result
 
-主要なサービス:
-- `PresidentService`: プロジェクト計画
-- `DepartmentManagerService`: タスク分割
-- `SectionManagerService`: 実装計画
-- `EmployeeService`: タスク実行
+Main services:
+- `PresidentService`: Project planning
+- `DepartmentManagerService`: Task division
+- `SectionManagerService`: Implementation planning
+- `EmployeeService`: Task execution
 
-### 3. 設定管理層
+### 3. Configuration Management Layer
 
-#### YAML設定ファイル (config.yaml)
+#### YAML Configuration File (config.yaml)
 
-全ての設定は単一のYAMLファイルで管理されます：
+All configuration is managed in a single YAML file:
 
 ```yaml
-agents:          # エージェント設定
-llm:            # LLMプロバイダー設定
-grpc:           # gRPC通信設定
-slack:          # Slack通知設定
-ui:             # ターミナルUI設定
-system:         # システム全般設定
+agents:          # Agent configuration
+llm:            # LLM provider configuration
+grpc:           # gRPC communication configuration
+slack:          # Slack notification configuration
+ui:             # Terminal UI configuration
+system:         # General system configuration
 ```
 
-#### 環境変数
+#### Environment Variables
 
-機密情報は環境変数で管理:
-- `SLACK_BOT_TOKEN`: Slack Botトークン
-- `SLACK_CHANNEL_ID`: 通知先チャンネルID
-- `GOOGLE_AI_API_KEY`: Google AI APIキー
+Sensitive information is managed via environment variables:
+- `SLACK_BOT_TOKEN`: Slack Bot token
+- `SLACK_CHANNEL_ID`: Notification channel ID
+- `GOOGLE_AI_API_KEY`: Google AI API key
 
-### 4. UI層 (Bubble Tea)
+### 4. UI Layer (Bubble Tea)
 
-#### Terminal UI コンポーネント
+#### Terminal UI Components
 
-- **入力エリア**: プロジェクト要件の入力
-- **ステータス表示**: 各エージェントの状態
-- **メッセージログ**: システムメッセージの表示
-- **プログレス表示**: 進行状況の可視化
+- **Input Area**: Input for project requirements
+- **Status Display**: Status of each agent
+- **Message Log**: Display of system messages
+- **Progress Display**: Visualization of progress
 
-#### キー操作
+#### Key Operations
 
-- `Alt+Enter`: 要件送信
-- `Esc`: 終了
+- `Alt+Enter`: Submit requirements
+- `Esc`: Exit
 
-### 5. 通知層 (Slack)
+### 5. Notification Layer (Slack)
 
-#### イベント種別
+#### Event Types
 
-1. **プロジェクト開始** (`project_start`)
-   - プロジェクトが開始されたとき
+1. **Project Start** (`project_start`)
+   - When a project is started
 
-2. **タスク完了** (`task_complete`)
-   - 各タスクが完了したとき
+2. **Task Complete** (`task_complete`)
+   - When each task is completed
 
-3. **エラー発生** (`error`)
-   - エラーが発生したとき
+3. **Error Occurred** (`error`)
+   - When an error occurs
 
-4. **プロジェクト完了** (`project_complete`)
-   - プロジェクト全体が完了したとき
+4. **Project Complete** (`project_complete`)
+   - When the entire project is completed
 
-#### メッセージテンプレート
+#### Message Templates
 
-テンプレート内で以下の変数が使用可能:
-- `{{.ProjectName}}`: プロジェクト名
-- `{{.TaskName}}`: タスク名
-- `{{.Agent}}`: エージェントID
-- `{{.ErrorMessage}}`: エラーメッセージ
-- `{{.Timestamp}}`: タイムスタンプ
+The following variables are available in templates:
+- `{{.ProjectName}}`: Project name
+- `{{.TaskName}}`: Task name
+- `{{.Agent}}`: Agent ID
+- `{{.ErrorMessage}}`: Error message
+- `{{.Timestamp}}`: Timestamp
 
-## データフロー
+## Data Flow
 
-### 1. プロジェクト開始フロー
-
-```
-クライアント
-  ↓ (要件入力)
-社長エージェント
-  ↓ (要件分析)
-社長秘書エージェント
-  ↓ (要件詳細化)
-部長秘書エージェント
-  ↓ (リサーチ・調整)
-部長エージェント
-  ↓ (タスク分割)
-課長秘書エージェント × N
-  ↓ (仕様詰め)
-課長エージェント × N
-  ↓ (実装計画)
-平社員エージェント × M
-  ↓ (実装)
-成果物
-```
-
-### 2. 結果集約フロー
+### 1. Project Start Flow
 
 ```
-平社員エージェント
-  ↓ (成果物)
-課長エージェント
-  ↓ (レビュー・集約)
-部長エージェント
-  ↓ (統合)
-社長エージェント
-  ↓ (最終確認)
-クライアント
+Client
+  ↓ (Requirements input)
+President Agent
+  ↓ (Requirements analysis)
+President Secretary Agent
+  ↓ (Requirements detailing)
+Department Secretary Agent
+  ↓ (Research & coordination)
+Department Manager Agent
+  ↓ (Task division)
+Section Secretary Agent × N
+  ↓ (Specification refinement)
+Section Manager Agent × N
+  ↓ (Implementation planning)
+Employee Agent × M
+  ↓ (Implementation)
+Deliverables
 ```
 
-## 拡張性
+### 2. Result Aggregation Flow
 
-### スケーラビリティ
+```
+Employee Agent
+  ↓ (Deliverables)
+Section Manager Agent
+  ↓ (Review & aggregation)
+Department Manager Agent
+  ↓ (Integration)
+President Agent
+  ↓ (Final confirmation)
+Client
+```
 
-- **水平スケーリング**: 各エージェント数はYAMLで設定可能
-- **分散実行**: gRPCインターフェースにより独立プロセス化が可能
-- **マイクロサービス化**: 将来的に各層を別サービスとして分離可能
+## Extensibility
 
-### カスタマイズ
+### Scalability
 
-- **エージェント人格**: YAMLでプロンプトをカスタマイズ
-- **ツール追加**: 各エージェントに使用可能なツールを設定
-- **通知カスタマイズ**: Slackメッセージテンプレートの変更
+- **Horizontal Scaling**: Number of agents can be configured in YAML
+- **Distributed Execution**: Independent processes possible through gRPC interface
+- **Microservice Architecture**: Each layer can be separated as different services in the future
 
-## セキュリティ
+### Customization
 
-### 機密情報の管理
+- **Agent Personality**: Customize prompts in YAML
+- **Tool Addition**: Configure available tools for each agent
+- **Notification Customization**: Modify Slack message templates
 
-- 環境変数による機密情報の分離
-- `.env`ファイルの`.gitignore`への追加
-- APIキーの定期的なローテーション推奨
+## Security
 
-### 通信セキュリティ
+### Sensitive Information Management
 
-- gRPC over TLS対応（設定により有効化）
-- 認証・認可機能の追加予定
+- Separation of sensitive information via environment variables
+- Addition of `.env` file to `.gitignore`
+- Recommended periodic rotation of API keys
 
-## パフォーマンス
+### Communication Security
 
-### 並行処理
+- gRPC over TLS support (enabled via configuration)
+- Authentication and authorization features planned
 
-- Goのgoroutineによる効率的な並行処理
-- エージェント間の非同期通信
-- タスクの並列実行（設定で制限可能）
+## Performance
 
-### リソース管理
+### Concurrent Processing
 
-- タイムアウト設定による無限待機の防止
-- リトライ回数の制限
-- 同時実行タスク数の上限設定
+- Efficient concurrent processing using Go goroutines
+- Asynchronous communication between agents
+- Parallel task execution (can be limited via configuration)
 
-## トラブルシューティング
+### Resource Management
 
-### よくある問題
+- Prevention of infinite waiting through timeout settings
+- Limitation on retry attempts
+- Maximum limit on concurrent task count
 
-1. **ビルドエラー**: `make deps`で依存関係を再インストール
-2. **Slack通知が届かない**: トークンとチャンネルIDを確認
-3. **エージェントがタイムアウト**: `config.yaml`のタイムアウト値を増加
+## Troubleshooting
 
-### ログ確認
+### Common Issues
+
+1. **Build Error**: Reinstall dependencies with `make deps`
+2. **Slack Notifications Not Received**: Check token and channel ID
+3. **Agent Timeout**: Increase timeout value in `config.yaml`
+
+### Log Checking
 
 ```bash
-# ログディレクトリ
+# Log directory
 ./logs/
 
-# ログレベル設定
-ui.logLevel: "debug"  # config.yaml内
+# Log level setting
+ui.logLevel: "debug"  # in config.yaml
 ```
 
-## 今後の開発予定
+## Future Development Plans
 
-1. **Google ADK統合**: 実際のLLM呼び出しの実装
-2. **ナレッジベース**: エージェント間で共有される知識ベースシステム
-3. **ツールシステム**: エージェントが使用できる外部ツールの実装
-4. **Webインターフェース**: ブラウザベースのUIの追加
-5. **メトリクス**: プロメテウス対応のメトリクス収集
-6. **A2Aプロトコル**: Agent-to-Agent通信の実装
+1. **Google ADK Integration**: Implementation of actual LLM calls
+2. **Knowledge Base**: Knowledge base system shared between agents
+3. **Tool System**: Implementation of external tools available to agents
+4. **Web Interface**: Addition of browser-based UI
+5. **Metrics**: Prometheus-compatible metrics collection
+6. **A2A Protocol**: Implementation of Agent-to-Agent communication
