@@ -14,28 +14,29 @@ slack:
     - project_complete
 
 models:
-  gpt4:
-    name: "gpt-4"
-    api_key_env: "OPENAI_API_KEY"
+  # Note: The current implementation uses Google ADK which primarily supports Gemini.
+  # Other models can be configured but require custom adapter implementation.
   gemini:
     name: "gemini-1.5-pro"
     api_key_env: "GEMINI_API_KEY"
-  claude:
-    name: "claude-3-opus"
-    api_key_env: "CLAUDE_API_KEY"
+
+  # Placeholders for other models if adapters are added:
+  # gpt4:
+  #   name: "gpt-4"
+  #   api_key_env: "OPENAI_API_KEY"
 
 agents:
   president:
     role: "President"
     count: 1
-    model: "gpt4"
+    model: "gemini"
     system_prompt: "You are the President of BuildBureau. Your goal is to understand client requirements and create a high-level project plan."
     allowed_tools: ["web_search"]
 
   manager:
     role: "Manager"
     count: 1
-    model: "claude"
+    model: "gemini"
     system_prompt: "You are a Department Manager. You receive a project plan and break it down into section tasks."
     allowed_tools: ["web_search", "knowledge_base"]
 

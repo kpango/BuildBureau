@@ -10,7 +10,6 @@ import (
 	"buildbureau/internal/agents"
 	"buildbureau/internal/ui"
 	"buildbureau/pkg/a2a"
-	"buildbureau/pkg/adk"
 	"buildbureau/pkg/config"
 	"buildbureau/pkg/slack"
 )
@@ -25,50 +24,23 @@ func main() {
 	// 2. Initialize Infrastructure
 	bus := a2a.NewBus()
 
-	// Real LLM Client (will use env vars if present)
-	// Build map of keys
-	apiKeys := make(map[string]string)
-	for k, v := range cfg.Models {
-		apiKeys[k] = v.APIKey
-	}
-	// Note: If keys are missing, we might want to default to Mock.
-	// For this implementation, I'll use a "Hybrid" client or just check.
-	// If no keys, use Mock.
-	var llmClient adk.LLMClient
-
-	// Simple check: if at least one key is present, use Real (simulated).
-	// Otherwise use Mock.
+	// Check if we have keys to decide on Mock vs Real
 	hasKeys := false
-	for _, k := range apiKeys {
-		if k != "" {
+	for _, m := range cfg.Models {
+		if m.APIKey != "" {
 			hasKeys = true
 			break
 		}
 	}
 
-	if hasKeys {
-		llmClient = adk.NewRealLLMClient(apiKeys)
-		fmt.Println("Using Real LLM Client (Simulated)")
-	} else {
-		llmClient = adk.NewMockLLMClient()
-		fmt.Println("Using Mock LLM Client (No API keys found)")
-	}
-
 	// 3. Initialize System (Agents)
-	sys := agents.NewSystem(cfg, bus, llmClient)
-
-	// If using Mock Client, we also need to inject the Mock Implementations into the Agents
-	// because NewMockLLMClient just returns strings, but Agents might expect structured JSON.
-	// So we use SetupMocks() which overrides the Agent.Process logic partially or fully.
-	// Actually, `SetupMocks` in `internal/agents/mocks.go` replaces `MockImpl` on the agent.
-	// This completely bypasses the LLMClient.
-	// If we want to use the RealLLMClient, we should NOT call SetupMocks.
-	// If we want to use the MockLLMClient, we SHOULD call SetupMocks because the MockLLMClient
-	// in `pkg/adk/llm.go` returns a generic string which will fail JSON parsing in `Agent.Process`.
+	sys := agents.NewSystem(cfg, bus)
 
 	if !hasKeys {
 		sys.SetupMocks()
-		fmt.Println("Agents configured with Mock Implementations")
+		fmt.Println("Agents configured with Mock Implementations (No API keys found)")
+	} else {
+		fmt.Println("Agents configured with Real ADK (Keys found)")
 	}
 
 	// 4. Initialize Slack

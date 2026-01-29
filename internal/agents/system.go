@@ -13,7 +13,6 @@ import (
 type System struct {
 	Config    *config.Config
 	Bus       *a2a.Bus
-	LLM       adk.LLMClient
 
 	President *adk.Agent[protocol.RequirementSpec, protocol.TaskList]
 	Manager   *adk.Agent[protocol.TaskList, protocol.SectionTaskPlans]
@@ -21,44 +20,64 @@ type System struct {
 	Worker    *adk.Agent[protocol.ImplementationSpec, protocol.ResultArtifact]
 }
 
-func NewSystem(cfg *config.Config, bus *a2a.Bus, llm adk.LLMClient) *System {
+func NewSystem(cfg *config.Config, bus *a2a.Bus) *System {
 	sys := &System{
 		Config: cfg,
 		Bus:    bus,
-		LLM:    llm,
+	}
+
+	// Helper to get key and real model name for a model ref (e.g. "gpt4" -> "sk-...", "gpt-4")
+	getModelInfo := func(modelRef string) (string, string) {
+		if m, ok := cfg.Models[modelRef]; ok {
+			return m.APIKey, m.Name
+		}
+		// If direct model name used or not found in definitions
+		return "", modelRef
 	}
 
 	// Initialize Agents
 	// President
+	presCfg := cfg.Agents["president"]
+	k, n := getModelInfo(presCfg.Model)
 	sys.President = adk.NewAgent[protocol.RequirementSpec, protocol.TaskList](
 		"president",
-		cfg.Agents["president"],
+		presCfg,
 		bus,
-		llm,
+		k,
+		n,
 	)
 
 	// Manager
+	mgrCfg := cfg.Agents["manager"]
+	k, n = getModelInfo(mgrCfg.Model)
 	sys.Manager = adk.NewAgent[protocol.TaskList, protocol.SectionTaskPlans](
 		"manager",
-		cfg.Agents["manager"],
+		mgrCfg,
 		bus,
-		llm,
+		k,
+		n,
 	)
 
-	// Section (Now takes single Task)
+	// Section
+	sectCfg := cfg.Agents["section"]
+	k, n = getModelInfo(sectCfg.Model)
 	sys.Section = adk.NewAgent[protocol.SectionTask, protocol.ImplementationSpec](
 		"section",
-		cfg.Agents["section"],
+		sectCfg,
 		bus,
-		llm,
+		k,
+		n,
 	)
 
 	// Worker
+	workCfg := cfg.Agents["worker"]
+	k, n = getModelInfo(workCfg.Model)
 	sys.Worker = adk.NewAgent[protocol.ImplementationSpec, protocol.ResultArtifact](
 		"worker",
-		cfg.Agents["worker"],
+		workCfg,
 		bus,
-		llm,
+		k,
+		n,
 	)
 
 	return sys

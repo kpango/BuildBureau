@@ -19,7 +19,6 @@ type TestResp struct {
 
 func TestAgentProcess(t *testing.T) {
 	bus := a2a.NewBus()
-	llm := NewMockLLMClient()
 
 	cfg := config.AgentConfig{
 		Role: "Tester",
@@ -27,9 +26,10 @@ func TestAgentProcess(t *testing.T) {
 		SystemPrompt: "You are a tester.",
 	}
 
-	agent := NewAgent[TestReq, TestResp]("test-agent", cfg, bus, llm)
+	// Pass empty API key to force no-runner mode
+	agent := NewAgent[TestReq, TestResp]("test-agent", cfg, bus, "", "")
 
-	// Inject MockImpl to avoid JSON parse error from dummy LLM response
+	// Inject MockImpl
 	agent.MockImpl = func(ctx context.Context, req TestReq) (TestResp, error) {
 		return TestResp{Output: "Processed: " + req.Input}, nil
 	}
