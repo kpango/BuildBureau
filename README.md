@@ -2,6 +2,10 @@
 
 Multi-layered AI Agent Implementation System - Hierarchical multi-agent configuration from President to Employee
 
+[![Go Version](https://img.shields.io/badge/Go-1.23%2B-blue)](https://go.dev/)
+[![Tests](https://img.shields.io/badge/tests-27%2F27%20passing-success)](https://github.com/kpango/BuildBureau)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+
 ## Overview
 
 BuildBureau is an AI system with a hierarchical multi-agent configuration: President → Department Manager → Section Manager → Employee. Each level has secretary agents that elaborate on instructions from higher-level agents, recording, assisting, and scheduling tasks.
@@ -153,6 +157,25 @@ When TUI is enabled, an interactive terminal interface starts:
 5. **Section Manager Agent**: Develops implementation plan and specifications
 6. **Section Secretary**: Creates draft implementation procedures
 7. **Employee Agent**: Executes actual implementation
+
+## Examples
+
+See the `examples/` directory for complete working examples:
+
+```bash
+# Run the full system demo
+cd examples/demo
+go run main.go
+```
+
+The demo shows:
+- Complete workflow from project planning to task execution
+- All agent types working together
+- Knowledge base for information sharing
+- Tool usage by agents
+- Agent status tracking
+
+See [examples/README.md](examples/README.md) for more details.
 
 ## Development
 
