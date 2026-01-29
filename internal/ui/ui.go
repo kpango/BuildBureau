@@ -58,7 +58,7 @@ func NewModel() Model {
 		spinner:       s,
 		messages:      make([]string, 0),
 		agentStatuses: make([]agent.Status, 0),
-		projectStatus: "待機中",
+		projectStatus: "Waiting",
 		lastUpdate:    time.Now(),
 	}
 }

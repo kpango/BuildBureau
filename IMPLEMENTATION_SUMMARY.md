@@ -11,13 +11,13 @@ Successfully implemented BuildBureau, a hierarchical multi-layer AI agent system
 #### Agent System
 - **Base Agent Interface**: Generic agent interface with ID, Type, Process, and GetStatus methods
 - **Agent Types Supported**:
-  - President Agent (社長エージェント)
-  - President Secretary Agent (社長秘書エージェント)
-  - Department Manager Agent (部長エージェント)
-  - Department Secretary Agent (部長秘書エージェント)
-  - Section Manager Agent (課長エージェント) - configurable count
-  - Section Secretary Agent (課長秘書エージェント) - configurable count
-  - Employee Agent (平社員エージェント) - configurable count
+  - President Agent
+  - President Secretary Agent
+  - Department Manager Agent
+  - Department Secretary Agent
+  - Section Manager Agent - configurable count
+  - Section Secretary Agent - configurable count
+  - Employee Agent - configurable count
 
 - **Agent Pool**: Centralized agent management with:
   - Registration and retrieval by ID
