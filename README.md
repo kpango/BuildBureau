@@ -64,6 +64,23 @@ make proto
 make build
 ```
 
+### Environment Variables
+
+Set up required environment variables:
+
+```bash
+# Google AI API Key (required for Gemini models)
+export GOOGLE_AI_API_KEY="your-api-key-here"
+
+# Slack notifications (optional)
+export SLACK_BOT_TOKEN="xoxb-..."
+export SLACK_CHANNEL_ID="C..."
+```
+
+Get a Google AI API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+See [docs/GOOGLE_ADK.md](docs/GOOGLE_ADK.md) for complete setup guide.
+
 ## Configuration
 
 All settings are managed in the `config.yaml` file.
