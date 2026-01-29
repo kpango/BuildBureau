@@ -244,12 +244,12 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## TODO
 
-- [x] ~~Implement Google ADK integration~~ (Placeholder structure ready)
+- [x] ~~Implement Google ADK integration~~ (Fully implemented with Gemini models)
 - [x] ~~Complete gRPC service implementation~~ (All services implemented with tests)
 - [x] ~~Implement agent-to-agent communication~~ (Via gRPC services)
 - [x] ~~Implement knowledge base~~ (In-memory KB with full CRUD)
 - [x] ~~Implement tool system~~ (5 built-in tools with registry)
-- [ ] Support streaming (Structure ready, needs LLM provider integration)
+- [x] ~~Support streaming~~ (Implemented for Google ADK)
 - [x] ~~Enhance error handling~~ (Improved in service layer)
-- [x] ~~Improve test coverage~~ (17+ new tests added)
+- [x] ~~Improve test coverage~~ (33+ tests added)
 - [ ] Expand documentation (Continuous improvement)

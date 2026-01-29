@@ -13,6 +13,39 @@ cd examples/demo
 go run main.go
 ```
 
+## Google ADK Integration Example
+
+The `google-adk` directory demonstrates using Google's Generative AI (Gemini) with BuildBureau.
+
+### Running the Google ADK Example
+
+```bash
+# Set your Google AI API key
+export GOOGLE_AI_API_KEY="your-api-key-here"
+
+# Run the example
+cd examples/google-adk
+go run main.go
+```
+
+### Getting a Google AI API Key
+
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Click "Create API Key"
+3. Copy the key and set it as an environment variable
+
+### What the Example Shows
+
+- Creating a Google ADK client
+- Simple text generation with system instructions
+- Streaming responses
+- Using temperature and max tokens parameters
+- Error handling
+
+## Demo Application (Multi-Agent System)
+
+The `demo` directory contains a complete walkthrough of the BuildBureau multi-agent system.
+
 ### What the Demo Shows
 
 The demo application demonstrates:
