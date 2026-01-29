@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package buildbureau.v1;
+
+option go_package = "github.com/kpango/BuildBureau/proto/gen/go/buildbureau/v1;buildbureau";
+
+// RequirementSpec represents client requirements
+message RequirementSpec {
+  string project_id = 1;
+  string project_name = 2;
+  string description = 3;
+  map<string, string> metadata = 4;
+  repeated string constraints = 5;
+}
+
+// TaskUnit represents a single task
+message TaskUnit {
+  string task_id = 1;
+  string title = 2;
+  string description = 3;
+  string assigned_to = 4;
+  string status = 5;
+  map<string, string> metadata = 6;
+  repeated string dependencies = 7;
+}
+
+// TaskList represents a collection of tasks
+message TaskList {
+  repeated TaskUnit tasks = 1;
+  string project_id = 2;
+}
+
+// SectionTask represents a task for a section
+message SectionTask {
+  string section_id = 1;
+  string section_name = 2;
+  repeated TaskUnit tasks = 3;
+  string manager_id = 4;
+}
+
+// SectionTaskPlans represents multiple section task plans
+message SectionTaskPlans {
+  repeated SectionTask sections = 1;
+  string project_id = 2;
+}
+
+// ImplementationSpec represents detailed implementation specification
+message ImplementationSpec {
+  string spec_id = 1;
+  string task_id = 2;
+  string title = 3;
+  string detailed_description = 4;
+  repeated string steps = 5;
+  map<string, string> parameters = 6;
+  repeated string resources = 7;
+}
+
+// ResultArtifact represents the result of task execution
+message ResultArtifact {
+  string artifact_id = 1;
+  string task_id = 2;
+  string type = 3;  // code, document, data, etc.
+  bytes content = 4;
+  map<string, string> metadata = 5;
+  string status = 6;  // success, partial, failed
+  string message = 7;
+}
+
+// StatusUpdate represents progress status
+message StatusUpdate {
+  string agent_id = 1;
+  string agent_type = 2;
+  string task_id = 3;
+  string status = 4;
+  string message = 5;
+  int64 timestamp = 6;
+}
+
+// PresidentService handles top-level project planning
+service PresidentService {
+  // PlanProject receives requirements and creates initial task breakdown
+  rpc PlanProject(RequirementSpec) returns (TaskList);
+  
+  // GetProjectStatus returns current project status
+  rpc GetProjectStatus(ProjectStatusRequest) returns (ProjectStatusResponse);
+}
+
+// DepartmentManagerService handles mid-level task division
+service DepartmentManagerService {
+  // DivideTasks divides tasks into section-level tasks
+  rpc DivideTasks(TaskList) returns (SectionTaskPlans);
+  
+  // GetSectionStatus returns status of sections
+  rpc GetSectionStatus(SectionStatusRequest) returns (SectionStatusResponse);
+}
+
+// SectionManagerService handles detailed implementation planning
+service SectionManagerService {
+  // PrepareImplementationPlan creates detailed implementation specs
+  rpc PrepareImplementationPlan(SectionTask) returns (stream ImplementationSpec);
+  
+  // ReviewImplementation reviews completed implementation
+  rpc ReviewImplementation(ResultArtifact) returns (ReviewResult);
+}
+
+// EmployeeService handles actual task execution
+service EmployeeService {
+  // ExecuteTask executes the given implementation spec
+  rpc ExecuteTask(ImplementationSpec) returns (ResultArtifact);
+  
+  // GetTaskProgress returns progress of task execution
+  rpc GetTaskProgress(TaskProgressRequest) returns (TaskProgressResponse);
+}
+
+// Supporting message types
+message ProjectStatusRequest {
+  string project_id = 1;
+}
+
+message ProjectStatusResponse {
+  string project_id = 1;
+  string status = 2;
+  repeated StatusUpdate updates = 3;
+}
+
+message SectionStatusRequest {
+  string section_id = 1;
+}
+
+message SectionStatusResponse {
+  string section_id = 1;
+  string status = 2;
+  repeated StatusUpdate updates = 3;
+}
+
+message ReviewResult {
+  string artifact_id = 1;
+  bool approved = 2;
+  repeated string comments = 3;
+  repeated string suggestions = 4;
+}
+
+message TaskProgressRequest {
+  string task_id = 1;
+}
+
+message TaskProgressResponse {
+  string task_id = 1;
+  string status = 2;
+  int32 progress_percentage = 3;
+  string current_step = 4;
+}
