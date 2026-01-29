@@ -1,103 +1,103 @@
 # Contributing to BuildBureau
 
-BuildBureauへの貢献ありがとうございます！
+Thank you for contributing to BuildBureau!
 
-## 行動規範
+## Code of Conduct
 
-プロジェクトに参加するすべての人は、尊重と礼儀を持って行動することが期待されます。
+All participants in the project are expected to act with respect and courtesy.
 
-## 貢献の方法
+## How to Contribute
 
-### バグ報告
+### Bug Reports
 
-バグを見つけた場合：
+If you find a bug:
 
-1. 既存のissueを確認
-2. 新しいissueを作成し、以下を含める：
-   - バグの詳細な説明
-   - 再現手順
-   - 期待される動作
-   - 実際の動作
-   - 環境情報（OS、Goバージョン等）
+1. Check existing issues
+2. Create a new issue including:
+   - Detailed description of the bug
+   - Steps to reproduce
+   - Expected behavior
+   - Actual behavior
+   - Environment information (OS, Go version, etc.)
 
-### 機能提案
+### Feature Proposals
 
-新機能を提案する場合：
+When proposing a new feature:
 
-1. issueで提案を議論
-2. 実装前にメンテナーの承認を得る
-3. 実装の詳細を含める
+1. Discuss the proposal in an issue
+2. Get approval from maintainers before implementation
+3. Include implementation details
 
-### プルリクエスト
+### Pull Requests
 
-1. **フォークとクローン**
+1. **Fork and Clone**
    ```bash
    git clone https://github.com/YOUR_USERNAME/BuildBureau.git
    cd BuildBureau
    ```
 
-2. **ブランチ作成**
+2. **Create Branch**
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-3. **変更を実装**
-   - コードを書く
-   - テストを追加
-   - ドキュメントを更新
+3. **Implement Changes**
+   - Write code
+   - Add tests
+   - Update documentation
 
-4. **テスト**
+4. **Test**
    ```bash
    make test
    make lint
    ```
 
-5. **コミット**
+5. **Commit**
    ```bash
    git add .
    git commit -m "feat: Add your feature"
    ```
 
-6. **プッシュ**
+6. **Push**
    ```bash
    git push origin feature/your-feature-name
    ```
 
-7. **プルリクエスト作成**
-   - GitHubでPRを作成
-   - 変更内容を説明
-   - 関連issueをリンク
+7. **Create Pull Request**
+   - Create a PR on GitHub
+   - Describe the changes
+   - Link related issues
 
-## コーディング規約
+## Coding Conventions
 
-### Go スタイルガイド
+### Go Style Guide
 
-- [Effective Go](https://golang.org/doc/effective_go.html)に従う
-- `gofmt`でフォーマット
-- `go vet`でチェック
+- Follow [Effective Go](https://golang.org/doc/effective_go.html)
+- Format with `gofmt`
+- Check with `go vet`
 
-### 命名規則
+### Naming Conventions
 
 ```go
-// パッケージ: 小文字、単語
+// Package: lowercase, single word
 package agent
 
-// エクスポート型: PascalCase
+// Exported types: PascalCase
 type AgentPool struct {}
 
-// 非エクスポート型: camelCase
+// Unexported types: camelCase
 type agentInternal struct {}
 
-// 関数: PascalCase (エクスポート), camelCase (非エクスポート)
+// Functions: PascalCase (exported), camelCase (unexported)
 func NewAgent() {}
 func processTask() {}
 
-// 定数: PascalCase (エクスポート), camelCase (非エクスポート)
+// Constants: PascalCase (exported), camelCase (unexported)
 const MaxRetryCount = 3
 const defaultTimeout = 60
 ```
 
-### コメント
+### Comments
 
 ```go
 // Package agent provides AI agent implementations.
@@ -111,29 +111,29 @@ type Agent interface {
 }
 ```
 
-### エラーハンドリング
+### Error Handling
 
 ```go
-// 良い例
+// Good example
 if err != nil {
     return fmt.Errorf("failed to process task: %w", err)
 }
 
-// エラーは適切にラップする
+// Wrap errors appropriately
 if err := doSomething(); err != nil {
     return fmt.Errorf("operation failed: %w", err)
 }
 ```
 
-## テスト
+## Testing
 
-### テストの必須事項
+### Testing Requirements
 
-- すべての公開関数にテストを書く
-- テストカバレッジ80%以上を目指す
-- テーブル駆動テストを使用
+- Write tests for all public functions
+- Aim for 80%+ test coverage
+- Use table-driven tests
 
-### テストの例
+### Test Example
 
 ```go
 func TestNewAgent(t *testing.T) {
@@ -162,24 +162,24 @@ func TestNewAgent(t *testing.T) {
 }
 ```
 
-## ドキュメント
+## Documentation
 
-### コードドキュメント
+### Code Documentation
 
-- すべての公開APIにGoDocコメントを追加
-- 複雑なロジックには説明コメントを追加
+- Add GoDoc comments to all public APIs
+- Add explanatory comments to complex logic
 
-### README更新
+### README Updates
 
-機能追加時は以下を更新：
+When adding features, update the following:
 
 - README.md
-- docs/ARCHITECTURE.md（必要に応じて）
-- docs/CONFIGURATION.md（設定追加時）
+- docs/ARCHITECTURE.md (as needed)
+- docs/CONFIGURATION.md (when adding configuration)
 
-## コミットメッセージ
+## Commit Messages
 
-### フォーマット
+### Format
 
 ```
 <type>(<scope>): <subject>
@@ -191,16 +191,16 @@ func TestNewAgent(t *testing.T) {
 
 ### Type
 
-- `feat`: 新機能
-- `fix`: バグ修正
-- `docs`: ドキュメントのみの変更
-- `style`: コードの意味に影響しない変更（空白、フォーマット等）
-- `refactor`: バグ修正も機能追加もしないコード変更
-- `perf`: パフォーマンス改善
-- `test`: テストの追加・修正
-- `chore`: ビルドプロセスやツールの変更
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (whitespace, formatting, etc.)
+- `refactor`: Code changes that neither fix bugs nor add features
+- `perf`: Performance improvements
+- `test`: Adding or modifying tests
+- `chore`: Changes to build process or tools
 
-### 例
+### Example
 
 ```
 feat(agent): Add support for streaming responses
@@ -211,54 +211,54 @@ This allows clients to receive progress updates in real-time.
 Closes #123
 ```
 
-## プルリクエストのレビュー
+## Pull Request Review
 
-### レビュアー向け
+### For Reviewers
 
-- コードの品質を確認
-- テストの十分性を確認
-- ドキュメントの更新を確認
-- 建設的なフィードバックを提供
+- Verify code quality
+- Verify test adequacy
+- Verify documentation updates
+- Provide constructive feedback
 
-### 著者向け
+### For Authors
 
-- フィードバックに対応
-- 議論が必要な場合はコメントで説明
-- 変更を素早く反映
+- Respond to feedback
+- Explain in comments when discussion is needed
+- Incorporate changes promptly
 
-## リリースプロセス
+## Release Process
 
-### バージョニング
+### Versioning
 
-Semantic Versioning (SemVer) を使用：
+Uses Semantic Versioning (SemVer):
 
-- `MAJOR`: 互換性のない変更
-- `MINOR`: 後方互換性のある機能追加
-- `PATCH`: 後方互換性のあるバグ修正
+- `MAJOR`: Incompatible changes
+- `MINOR`: Backward-compatible feature additions
+- `PATCH`: Backward-compatible bug fixes
 
-### リリース手順
+### Release Steps
 
-1. CHANGELOGを更新
-2. バージョンタグを作成
-3. GitHubでリリースを作成
-4. リリースノートを記述
+1. Update CHANGELOG
+2. Create version tag
+3. Create release on GitHub
+4. Write release notes
 
-## コミュニティ
+## Community
 
-### 質問
+### Questions
 
-- GitHubのDiscussionsを使用
-- issueでバグ報告
+- Use GitHub Discussions
+- Report bugs in issues
 
-### コミュニケーション
+### Communication
 
-- 日本語・英語どちらでもOK
-- 丁寧で建設的なコミュニケーションを心がける
+- Both Japanese and English are acceptable
+- Strive for courteous and constructive communication
 
-## ライセンス
+## License
 
-貢献されたコードは、プロジェクトと同じライセンス（LICENSE参照）の下で提供されます。
+Contributed code is provided under the same license as the project (see LICENSE).
 
-## 謝辞
+## Acknowledgments
 
-貢献者の皆様に感謝します！
+Thank you to all contributors!
