@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package a2a;
+
+option go_package = "github.com/kpango/BuildBureau/pkg/a2a";
+
+// AgentService defines the A2A protocol interface for agent communication
+service AgentService {
+  // HandleTask processes a task request
+  rpc HandleTask(TaskRequest) returns (TaskResponse);
+  
+  // SendMessage sends a message between agents
+  rpc SendMessage(Message) returns (MessageResponse);
+  
+  // GetStatus queries the status of an agent or task
+  rpc GetStatus(StatusRequest) returns (StatusResponse);
+}
+
+// TaskRequest represents a task to be handled
+message TaskRequest {
+  string task_id = 1;
+  string title = 2;
+  string description = 3;
+  string from_agent = 4;
+  string to_agent = 5;
+  int64 created_at = 6;
+}
+
+// TaskResponse represents the result of task handling
+message TaskResponse {
+  string task_id = 1;
+  string status = 2;
+  string result = 3;
+  string error = 4;
+}
+
+// Message represents a communication between agents
+message Message {
+  string id = 1;
+  string from = 2;
+  string to = 3;
+  string content = 4;
+  int64 timestamp = 5;
+  string task_id = 6;
+}
+
+// MessageResponse confirms message delivery
+message MessageResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// StatusRequest queries for status information
+message StatusRequest {
+  string agent_id = 1;
+  string task_id = 2;
+}
+
+// StatusResponse returns status information
+message StatusResponse {
+  string agent_id = 1;
+  string status = 2;
+  repeated string active_tasks = 3;
+}

@@ -1,0 +1,55 @@
+# BuildBureau Configuration Example
+# Copy this file to config.yaml and customize as needed
+
+# LLM Settings (for future ADK integration)
+llm:
+  provider: "gemini"
+  api_key: "${GEMINI_API_KEY}"  # Set via environment variable
+  model: "gemini-1.5-pro"
+
+# Agent Configuration
+agents:
+  ceo:
+    name: "CEO Agent"
+    enabled: true
+  manager:
+    name: "Manager Agent"
+    enabled: true
+  lead:
+    name: "Lead Agent"
+    enabled: true
+  employee:
+    name: "Employee Agent"
+    enabled: true
+
+# Slack Configuration
+# To enable Slack notifications:
+# 1. Create a Slack App at https://api.slack.com/apps
+# 2. Add Bot Token Scopes: chat:write, channels:read
+# 3. Install the app to your workspace
+# 4. Copy the Bot User OAuth Token
+# 5. Set SLACK_BOT_TOKEN environment variable or paste it below
+# 6. Get channel IDs from Slack (right-click channel > View channel details)
+slack:
+  enabled: false
+  token: "${SLACK_BOT_TOKEN}"
+  channels:
+    management: "C123456789"  # Channel for CEO/Manager updates
+    updates: "C987654321"     # Channel for general project updates
+    dev: "C456789123"         # Channel for technical/dev updates
+  notifications:
+    # Notify when these roles are assigned tasks
+    notify_on_task_assigned:
+      - "CEO"
+      - "Manager"
+    # Notify when these roles complete tasks
+    notify_on_task_completed:
+      - "Employee"
+    # Always notify on errors
+    notify_on_error: true
+
+# UI Configuration
+ui:
+  show_agent_logs: true      # Display detailed agent activity
+  color_coding: true         # Use colors for different agents
+  refresh_rate_ms: 100       # UI refresh rate in milliseconds

@@ -1,0 +1,44 @@
+# BuildBureau Configuration
+
+# LLM Settings
+llm:
+  provider: "gemini"
+  api_key: "${GEMINI_API_KEY}"
+  model: "gemini-1.5-pro"
+
+# Agent Configuration
+agents:
+  ceo:
+    name: "CEO Agent"
+    enabled: true
+  manager:
+    name: "Manager Agent"
+    enabled: true
+  lead:
+    name: "Lead Agent"
+    enabled: true
+  employee:
+    name: "Employee Agent"
+    enabled: true
+
+# Slack Configuration
+slack:
+  enabled: false
+  token: "${SLACK_BOT_TOKEN}"
+  channels:
+    management: "C123456789"  # Management channel
+    updates: "C987654321"     # Project updates channel
+    dev: "C456789123"         # Development channel
+  notifications:
+    notify_on_task_assigned:
+      - "CEO"
+      - "Manager"
+    notify_on_task_completed:
+      - "Employee"
+    notify_on_error: true
+
+# UI Configuration
+ui:
+  show_agent_logs: true
+  color_coding: true
+  refresh_rate_ms: 100
