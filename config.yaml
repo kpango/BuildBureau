@@ -1,0 +1,31 @@
+organization:
+  layers:
+    - name: President
+      agent: ./agents/president.yaml
+    - name: Director
+      agent: ./agents/director.yaml
+    - name: Manager
+      agent: ./agents/manager.yaml
+    - name: Engineer
+      agent: ./agents/engineer.yaml
+    - name: Secretary
+      count: 1
+      attach_to: [President, Director, Manager]
+      agent: ./agents/secretary.yaml
+
+slack:
+  enabled: true
+  token: { env: SLACK_TOKEN }
+  channels: ["#alerts"]
+  notify_on: ["task_assigned", "task_completed"]
+
+llms:
+  default_model: gemini
+  api_keys:
+    gemini: "fake-key"
+
+sub_agents:
+  - name: CodexWorker
+    remote:
+      endpoint: "http://localhost:8080"
+      capabilities: [ "code-generation" ]
