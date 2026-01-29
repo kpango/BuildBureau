@@ -118,7 +118,7 @@ grpc:
 
 # Slack Integration
 slack:
-  enabled: true
+  enabled: false  # Set to true and provide tokens to enable
   token: "${SLACK_BOT_TOKEN}"
   channelID: "${SLACK_CHANNEL_ID}"
   notifications:
