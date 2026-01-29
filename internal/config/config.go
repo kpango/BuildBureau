@@ -37,10 +37,10 @@ type AgentConfig struct {
 
 // SlackConfig contains Slack integration settings
 type SlackConfig struct {
-	Enabled       bool                       `yaml:"enabled"`
-	Token         string                     `yaml:"token"`
-	Channels      ChannelMapping             `yaml:"channels"`
-	Notifications NotificationConfig         `yaml:"notifications"`
+	Enabled       bool               `yaml:"enabled"`
+	Token         string             `yaml:"token"`
+	Channels      ChannelMapping     `yaml:"channels"`
+	Notifications NotificationConfig `yaml:"notifications"`
 }
 
 // ChannelMapping maps event types to Slack channels

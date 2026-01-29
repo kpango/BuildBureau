@@ -6,10 +6,10 @@ import "time"
 type AgentRole string
 
 const (
-	RoleCEO      AgentRole = "CEO"
-	RoleManager  AgentRole = "Manager"
-	RoleLead     AgentRole = "Lead"
-	RoleEmployee AgentRole = "Employee"
+	RoleCEO       AgentRole = "CEO"
+	RoleManager   AgentRole = "Manager"
+	RoleLead      AgentRole = "Lead"
+	RoleEmployee  AgentRole = "Employee"
 	RoleSecretary AgentRole = "Secretary"
 )
 

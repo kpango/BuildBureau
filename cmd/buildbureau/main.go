@@ -93,13 +93,13 @@ func main() {
 
 // AgentHierarchy holds all agents in the system
 type AgentHierarchy struct {
-	ceo           *agent.CEOAgent
-	ceoSecretary  *agent.SecretaryAgent
-	managers      []*agent.ManagerAgent
+	ceo                *agent.CEOAgent
+	ceoSecretary       *agent.SecretaryAgent
+	managers           []*agent.ManagerAgent
 	managerSecretaries []*agent.SecretaryAgent
-	leads         []*agent.LeadAgent
-	leadSecretaries []*agent.SecretaryAgent
-	employees     []*agent.EmployeeAgent
+	leads              []*agent.LeadAgent
+	leadSecretaries    []*agent.SecretaryAgent
+	employees          []*agent.EmployeeAgent
 }
 
 // setupAgents creates and configures all agents
@@ -116,7 +116,7 @@ func setupAgents(cfg *config.Config, eventChan chan types.AgentEvent) *AgentHier
 		mgr := agent.NewManagerAgent(fmt.Sprintf("Manager %d", i+1), eventChan)
 		mgrSecretary := agent.NewSecretaryAgent(fmt.Sprintf("Manager %d Secretary", i+1), mgr, eventChan)
 		mgr.SetSecretary(mgrSecretary)
-		
+
 		hierarchy.managers = append(hierarchy.managers, mgr)
 		hierarchy.managerSecretaries = append(hierarchy.managerSecretaries, mgrSecretary)
 		hierarchy.ceo.AddManagerAgent(mgr)
@@ -126,7 +126,7 @@ func setupAgents(cfg *config.Config, eventChan chan types.AgentEvent) *AgentHier
 			lead := agent.NewLeadAgent(fmt.Sprintf("Lead %d-%d", i+1, j+1), eventChan)
 			leadSecretary := agent.NewSecretaryAgent(fmt.Sprintf("Lead %d-%d Secretary", i+1, j+1), lead, eventChan)
 			lead.SetSecretary(leadSecretary)
-			
+
 			hierarchy.leads = append(hierarchy.leads, lead)
 			hierarchy.leadSecretaries = append(hierarchy.leadSecretaries, leadSecretary)
 			mgr.AddLeadAgent(lead)
