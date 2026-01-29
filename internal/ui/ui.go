@@ -47,7 +47,7 @@ type Model struct {
 // NewModel creates a new UI model
 func NewModel() Model {
 	ta := textarea.New()
-	ta.Placeholder = "プロジェクトの要件を入力してください..."
+	ta.Placeholder = "Enter your project requirements..."
 	ta.Focus()
 
 	s := spinner.New()
@@ -125,28 +125,28 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View renders the UI
 func (m Model) View() string {
 	if !m.ready {
-		return "\n  初期化中..."
+		return "\n  Initializing..."
 	}
 
 	var b strings.Builder
 
 	// Title
-	b.WriteString(titleStyle.Render("🏢 BuildBureau - マルチレイヤー AI エージェントシステム"))
+	b.WriteString(titleStyle.Render("🏢 BuildBureau - Multi-Layer AI Agent System"))
 	b.WriteString("\n\n")
 
 	// Project info
 	if m.projectName != "" {
-		b.WriteString(fmt.Sprintf("プロジェクト: %s\n", m.projectName))
-		b.WriteString(fmt.Sprintf("ステータス: %s\n", m.projectStatus))
+		b.WriteString(fmt.Sprintf("Project: %s\n", m.projectName))
+		b.WriteString(fmt.Sprintf("Status: %s\n", m.projectStatus))
 		if m.currentPhase != "" {
-			b.WriteString(fmt.Sprintf("現在のフェーズ: %s\n", m.currentPhase))
+			b.WriteString(fmt.Sprintf("Current Phase: %s\n", m.currentPhase))
 		}
 		b.WriteString("\n")
 	}
 
 	// Agent statuses
 	if len(m.agentStatuses) > 0 {
-		b.WriteString("エージェント状態:\n")
+		b.WriteString("Agent Status:\n")
 		for _, status := range m.agentStatuses {
 			statusIcon := "⚪"
 			if status.State == "working" {
@@ -164,7 +164,7 @@ func (m Model) View() string {
 
 	// Recent messages
 	if len(m.messages) > 0 {
-		b.WriteString("最近のメッセージ:\n")
+		b.WriteString("Recent Messages:\n")
 		for _, msg := range m.messages {
 			b.WriteString(fmt.Sprintf("  • %s\n", msg))
 		}
@@ -173,15 +173,15 @@ func (m Model) View() string {
 
 	// Error display
 	if m.err != nil {
-		b.WriteString(errorStyle.Render(fmt.Sprintf("エラー: %v", m.err)))
+		b.WriteString(errorStyle.Render(fmt.Sprintf("Error: %v", m.err)))
 		b.WriteString("\n\n")
 	}
 
 	// Input area
-	b.WriteString("要件入力:\n")
+	b.WriteString("Requirements Input:\n")
 	b.WriteString(m.textarea.View())
 	b.WriteString("\n\n")
-	b.WriteString(infoStyle.Render("Alt+Enter: 送信 | Esc: 終了"))
+	b.WriteString(infoStyle.Render("Alt+Enter: Submit | Esc: Exit"))
 
 	return b.String()
 }
@@ -190,7 +190,7 @@ func (m Model) View() string {
 func (m Model) submitRequirements() tea.Cmd {
 	return func() tea.Msg {
 		// This would be implemented to actually submit to the agent system
-		return messageMsg{text: "プロジェクト要件を送信しました"}
+		return messageMsg{text: "Project requirements submitted"}
 	}
 }
 

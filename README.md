@@ -1,82 +1,82 @@
 # BuildBureau
 
-多層AIエージェント実装システム - 社長から平社員まで階層型マルチエージェント構成
+Multi-layered AI Agent Implementation System - Hierarchical multi-agent configuration from President to Employee
 
-## 概要
+## Overview
 
-BuildBureauは、社長→部長→課長→平社員の階層型マルチエージェント構成を取るAIシステムです。各階層には秘書エージェントが存在し、上位エージェントからの指示を詳細化し記録・補佐・スケジューリングします。
+BuildBureau is an AI system with a hierarchical multi-agent configuration: President → Department Manager → Section Manager → Employee. Each level has secretary agents that elaborate on instructions from higher-level agents, recording, assisting, and scheduling tasks.
 
-### アーキテクチャ
+### Architecture
 
 ```
-クライアント
+Client
     ↓
-社長エージェント + 社長秘書
+President Agent + President Secretary
     ↓
-部長エージェント + 部長秘書  
+Department Manager Agent + Department Secretary  
     ↓
-課長エージェント + 課長秘書
+Section Manager Agent + Section Secretary
     ↓
-平社員エージェント
+Employee Agent
 ```
 
-### 主な特徴
+### Key Features
 
-- **階層型エージェント構造**: 社長、部長、課長、平社員の4層構造
-- **秘書エージェント**: 各階層に秘書エージェントが存在し、タスク管理をサポート
-- **gRPC通信**: エージェント間はgRPCで疎結合に通信
-- **YAML設定**: すべての設定をYAMLファイルで管理
-- **Slack通知**: 重要なイベントをSlackに自動通知
-- **Terminal UI**: Bubble Teaによる対話型ターミナルUI
-- **単一バイナリ**: Goで実装された単一バイナリで動作
+- **Hierarchical Agent Structure**: 4-layer structure with President, Department Manager, Section Manager, and Employee
+- **Secretary Agents**: Secretary agents at each level to support task management
+- **gRPC Communication**: Loosely coupled communication between agents via gRPC
+- **YAML Configuration**: All settings managed through YAML files
+- **Slack Notifications**: Automatic notifications to Slack for important events
+- **Terminal UI**: Interactive terminal UI using Bubble Tea
+- **Single Binary**: Operates as a single binary implemented in Go
 
-## 技術スタック
+## Tech Stack
 
-- **言語**: Go 1.23+
-- **AIエージェント**: Google ADK (Agent Development Kit) for Go
-- **通信**: gRPC (Protocol Buffers)
+- **Language**: Go 1.23+
+- **AI Agents**: Google ADK (Agent Development Kit) for Go
+- **Communication**: gRPC (Protocol Buffers)
 - **UI**: Charmbracelet Bubble Tea
-- **通知**: Slack API (slack-go)
-- **設定**: YAML (gopkg.in/yaml.v3)
+- **Notifications**: Slack API (slack-go)
+- **Configuration**: YAML (gopkg.in/yaml.v3)
 
-## インストール
+## Installation
 
-### 前提条件
+### Prerequisites
 
-- Go 1.23以上
+- Go 1.23 or higher
 - protoc (Protocol Buffers compiler)
 
-### ビルド
+### Build
 
 ```bash
-# 依存関係のインストール
+# Install dependencies
 make deps
 
-# プロトコルバッファのコード生成（必要な場合）
+# Generate protocol buffer code (if needed)
 make install-tools
 make proto
 
-# ビルド
+# Build
 make build
 ```
 
-## 設定
+## Configuration
 
-`config.yaml`ファイルで全ての設定を管理します。
+All settings are managed in the `config.yaml` file.
 
-### 主要設定項目
+### Main Configuration Items
 
-#### エージェント設定
+#### Agent Configuration
 
-各エージェントタイプごとに以下を設定:
+For each agent type, configure:
 
-- `count`: エージェント数
-- `model`: 使用するLLMモデル
-- `instruction`: エージェントへのシステムプロンプト
-- `allowTools`: ツール使用の許可
-- `tools`: 使用可能なツールのリスト
-- `timeout`: タイムアウト時間（秒）
-- `retryCount`: リトライ回数
+- `count`: Number of agents
+- `model`: LLM model to use
+- `instruction`: System prompt for the agent
+- `allowTools`: Permission to use tools
+- `tools`: List of available tools
+- `timeout`: Timeout in seconds
+- `retryCount`: Number of retries
 
 ```yaml
 agents:
@@ -84,7 +84,7 @@ agents:
     count: 1
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは社長としてプロジェクト全体を俯瞰し方針を決定する立場です。
+      You are the President responsible for overseeing the entire project...
     allowTools: true
     tools:
       - web_search
@@ -93,7 +93,7 @@ agents:
     retryCount: 3
 ```
 
-#### Slack通知設定
+#### Slack Notification Settings
 
 ```yaml
 slack:
@@ -103,130 +103,130 @@ slack:
   notifications:
     projectStart:
       enabled: true
-      message: "🚀 プロジェクト「{{.ProjectName}}」が開始されました"
+      message: "🚀 Project \"{{.ProjectName}}\" has started"
 ```
 
-環境変数でトークンとチャンネルIDを設定:
+Configure token and channel ID via environment variables:
 
 ```bash
 export SLACK_BOT_TOKEN="xoxb-your-token"
 export SLACK_CHANNEL_ID="C01234567"
 ```
 
-#### UI設定
+#### UI Settings
 
 ```yaml
 ui:
   enableTUI: true
-  refreshRate: 100  # ミリ秒
+  refreshRate: 100  # milliseconds
   theme: "default"
   showProgress: true
   logLevel: "info"
 ```
 
-## 使い方
+## Usage
 
-### 基本的な実行
+### Basic Execution
 
 ```bash
-# デフォルト設定で実行
+# Run with default configuration
 ./bin/buildbureau
 
-# カスタム設定ファイルを指定
+# Specify custom configuration file
 CONFIG_PATH=/path/to/config.yaml ./bin/buildbureau
 ```
 
 ### Terminal UI
 
-TUIが有効な場合、対話型のターミナルインターフェースが起動します:
+When TUI is enabled, an interactive terminal interface starts:
 
-- プロジェクト要件を入力
-- `Alt+Enter`: 要件を送信してプロジェクト開始
-- `Esc`: 終了
+- Enter project requirements
+- `Alt+Enter`: Submit requirements and start project
+- `Esc`: Exit
 
-### エージェントの動作フロー
+### Agent Operation Flow
 
-1. **社長エージェント**: クライアントからの要件を受け取り、全体計画を立案
-2. **社長秘書**: 要件を記録し、詳細化して部長秘書へ
-3. **部長エージェント**: タスクを課長単位に分割
-4. **部長秘書**: タスクを詳細化し、課長秘書へ
-5. **課長エージェント**: 実装計画と仕様書を策定
-6. **課長秘書**: 実装手順のドラフトを作成
-7. **平社員エージェント**: 具体的な実装を実行
+1. **President Agent**: Receives requirements from client and develops overall plan
+2. **President Secretary**: Records requirements, elaborates details, and passes to department secretary
+3. **Department Manager Agent**: Divides tasks into section-level units
+4. **Department Secretary**: Elaborates tasks and coordinates with section secretaries
+5. **Section Manager Agent**: Develops implementation plan and specifications
+6. **Section Secretary**: Creates draft implementation procedures
+7. **Employee Agent**: Executes actual implementation
 
-## 開発
+## Development
 
-### ディレクトリ構造
+### Directory Structure
 
 ```
 BuildBureau/
 ├── cmd/
-│   └── buildbureau/      # メインアプリケーション
+│   └── buildbureau/      # Main application
 │       └── main.go
 ├── internal/
-│   ├── agent/            # エージェント実装
-│   ├── config/           # 設定管理
-│   ├── grpc/             # gRPCサービス実装
-│   ├── slack/            # Slack通知
+│   ├── agent/            # Agent implementation
+│   ├── config/           # Configuration management
+│   ├── grpc/             # gRPC service implementation
+│   ├── slack/            # Slack notifications
 │   └── ui/               # Terminal UI
 ├── proto/
-│   └── buildbureau/v1/   # Protocol Buffers定義
-├── pkg/                  # 公開パッケージ
-├── config.yaml           # デフォルト設定
-├── Makefile             # ビルドスクリプト
-└── go.mod               # Go依存関係
+│   └── buildbureau/v1/   # Protocol Buffers definitions
+├── pkg/                  # Public packages
+├── config.yaml           # Default configuration
+├── Makefile             # Build scripts
+└── go.mod               # Go dependencies
 ```
 
-### テスト
+### Testing
 
 ```bash
 make test
 ```
 
-### フォーマットとLint
+### Format and Lint
 
 ```bash
 make lint
 ```
 
-## gRPCサービス
+## gRPC Services
 
-各階層でgRPCサービスを定義:
+gRPC services defined for each level:
 
-- **PresidentService**: プロジェクト計画立案
-- **DepartmentManagerService**: タスク分割
-- **SectionManagerService**: 実装計画策定
-- **EmployeeService**: タスク実行
+- **PresidentService**: Project planning
+- **DepartmentManagerService**: Task division
+- **SectionManagerService**: Implementation planning
+- **EmployeeService**: Task execution
 
-詳細は`proto/buildbureau/v1/service.proto`を参照。
+See `proto/buildbureau/v1/service.proto` for details.
 
-## Slack通知
+## Slack Notifications
 
-以下のイベントでSlack通知が送信されます:
+Slack notifications are sent for the following events:
 
-- プロジェクト開始
-- タスク完了
-- エラー発生
-- プロジェクト完了
+- Project start
+- Task completion
+- Error occurrence
+- Project completion
 
-通知の有効/無効や内容は`config.yaml`で設定可能。
+Notification enabling/disabling and content can be configured in `config.yaml`.
 
-## ライセンス
+## License
 
-このプロジェクトのライセンスについては[LICENSE](LICENSE)ファイルを参照してください。
+See the [LICENSE](LICENSE) file for license information.
 
-## 貢献
+## Contributing
 
-プルリクエストを歓迎します。大きな変更の場合は、まずissueを開いて変更内容を議論してください。
+Pull requests are welcome. For major changes, please open an issue first to discuss the proposed changes.
 
 ## TODO
 
-- [ ] Google ADK統合の実装
-- [ ] gRPCサービスの完全実装
-- [ ] エージェント間通信の実装
-- [ ] ナレッジベースの実装
-- [ ] ツールシステムの実装
-- [ ] ストリーミング対応
-- [ ] エラーハンドリングの強化
-- [ ] テストカバレッジの向上
-- [ ] ドキュメントの充実
+- [ ] Implement Google ADK integration
+- [ ] Complete gRPC service implementation
+- [ ] Implement agent-to-agent communication
+- [ ] Implement knowledge base
+- [ ] Implement tool system
+- [ ] Support streaming
+- [ ] Enhance error handling
+- [ ] Improve test coverage
+- [ ] Expand documentation

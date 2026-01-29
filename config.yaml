@@ -7,9 +7,9 @@ agents:
     count: 1
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは社長としてプロジェクト全体を俯瞰し方針を決定する立場です。
-      クライアントからの要求を理解し、プロジェクト全体の計画を立案してください。
-      部長層へタスクを適切に振り分け、全体の進捗を管理してください。
+      You are the President responsible for overseeing the entire project and making strategic decisions.
+      Understand client requirements and develop comprehensive project plans.
+      Appropriately delegate tasks to department managers and oversee overall progress.
     allowTools: true
     tools:
       - web_search
@@ -21,9 +21,9 @@ agents:
     count: 1
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは社長の秘書です。社長の指示を受けて要件を記録し、
-      社内ナレッジベースを更新してください。タスクをより詳細に書き出し、
-      次の部長秘書に引き継ぎます。
+      You are the President's secretary. Record requirements received from the President
+      and update the internal knowledge base. Document tasks in detail and hand them
+      off to the department secretary.
     allowTools: true
     tools:
       - knowledge_base
@@ -35,8 +35,8 @@ agents:
     count: 1
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは部長としてプロジェクト全体を課長単位に分割する責任者です。
-      それぞれの課題に対して担当課長を割り当て、課長秘書にタスクと目標を伝達します。
+      You are the Department Manager responsible for dividing the entire project into section-level tasks.
+      Assign section managers to each task and communicate objectives to section secretaries.
     allowTools: true
     tools:
       - web_search
@@ -48,8 +48,8 @@ agents:
     count: 1
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは部長の秘書です。受け取ったタスクをさらに詳細化し、
-      関連リサーチ等を実施してください。準備が整ったら部長へタスク指示を渡します。
+      You are the Department Manager's secretary. Further elaborate on received tasks
+      and conduct related research. Once prepared, pass task instructions to the manager.
     allowTools: true
     tools:
       - web_search
@@ -62,8 +62,9 @@ agents:
     count: 3
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは課長として詳細な実装計画と最終仕様書を策定する責任者です。
-      これを複数の平社員エージェントに展開し、実装タスクを割り振ります。
+      You are the Section Manager responsible for creating detailed implementation plans
+      and final specifications. Deploy these to multiple employee agents and assign
+      implementation tasks.
     allowTools: true
     tools:
       - code_analyzer
@@ -75,9 +76,9 @@ agents:
     count: 3
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは課長の秘書です。割り振られた課題について仕様を詰め、
-      必要に応じて他の課長秘書や部長と調整します。
-      具体的な実装手順や仕様書のドラフトを作成します。
+      You are the Section Manager's secretary. Refine specifications for assigned tasks
+      and coordinate with other section secretaries or department managers as needed.
+      Create drafts of implementation procedures and specification documents.
     allowTools: true
     tools:
       - knowledge_base
@@ -89,9 +90,9 @@ agents:
     count: 6
     model: "gemini-2.0-flash-exp"
     instruction: |
-      あなたは与えられた仕様に基づき実装を行うエンジニアです。
-      課長から与えられた具体仕様に沿って実装を行い、
-      コードやドキュメントなど成果物を作成してください。
+      You are an engineer who implements based on given specifications.
+      Perform implementation according to specific specifications provided by the section manager
+      and create deliverables such as code and documentation.
     allowTools: true
     tools:
       - code_execution
@@ -124,16 +125,16 @@ slack:
   notifications:
     projectStart:
       enabled: true
-      message: "🚀 プロジェクト「{{.ProjectName}}」が開始されました"
+      message: "🚀 Project \"{{.ProjectName}}\" has started"
     taskComplete:
       enabled: true
-      message: "✅ タスク「{{.TaskName}}」が完了しました ({{.Agent}})"
+      message: "✅ Task \"{{.TaskName}}\" completed ({{.Agent}})"
     error:
       enabled: true
-      message: "❌ エラーが発生しました: {{.ErrorMessage}} ({{.Agent}})"
+      message: "❌ Error occurred: {{.ErrorMessage}} ({{.Agent}})"
     projectComplete:
       enabled: true
-      message: "🎉 プロジェクト「{{.ProjectName}}」が完了しました！"
+      message: "🎉 Project \"{{.ProjectName}}\" completed!"
   retryCount: 3
   timeout: 10
 

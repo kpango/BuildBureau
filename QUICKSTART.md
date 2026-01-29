@@ -1,14 +1,14 @@
 # Quick Start Guide
 
-BuildBureauを5分で始める
+Get started with BuildBureau in 5 minutes
 
-## 1. インストール
+## 1. Installation
 
-### 前提条件
+### Prerequisites
 
-- Go 1.23以上
+- Go 1.23 or higher
 
-### ビルド
+### Build
 
 ```bash
 git clone https://github.com/kpango/BuildBureau.git
@@ -17,113 +17,113 @@ make deps
 make build
 ```
 
-## 2. 設定
+## 2. Configuration
 
-### 最小設定で開始
+### Start with minimal configuration
 
-`config.yaml`はそのまま使用可能です。
+You can use `config.yaml` as is.
 
-### Slack通知を有効にする（オプション）
+### Enable Slack notifications (Optional)
 
 ```bash
-# .envファイルを作成
+# Create .env file
 cp .env.example .env
 
-# .envを編集してトークンを設定
+# Edit .env and set tokens
 export SLACK_BOT_TOKEN="xoxb-your-token"
 export SLACK_CHANNEL_ID="C01234567"
 ```
 
-Slack通知が不要な場合：
+If you don't need Slack notifications:
 
 ```yaml
-# config.yamlで無効化
+# Disable in config.yaml
 slack:
   enabled: false
 ```
 
-## 3. 実行
+## 3. Execution
 
-### デフォルト設定で実行
+### Run with default configuration
 
 ```bash
 ./bin/buildbureau
 ```
 
-### Terminal UIの操作
+### Terminal UI Operations
 
-起動すると対話型のターミナルUIが表示されます：
+An interactive terminal UI will be displayed when launched:
 
 ```
-🏢 BuildBureau - マルチレイヤー AI エージェントシステム
+🏢 BuildBureau - Multi-Layer AI Agent System
 
-要件入力:
+Requirements Input:
 ┌──────────────────────────────────────┐
-│ プロジェクトの要件を入力してください...│
+│ Enter project requirements...        │
 │                                      │
 │                                      │
 └──────────────────────────────────────┘
 
-Alt+Enter: 送信 | Esc: 終了
+Alt+Enter: Submit | Esc: Exit
 ```
 
-### プロジェクト要件の入力
+### Entering Project Requirements
 
-1. テキストエリアにプロジェクトの要件を入力
-2. `Alt+Enter`を押して送信
-3. エージェントが処理を開始
+1. Enter project requirements in the text area
+2. Press `Alt+Enter` to submit
+3. Agents will start processing
 
-## 4. 動作確認
+## 4. Verification
 
-### 例：シンプルなプロジェクト
+### Example: Simple Project
 
 ```
-Webサイトの問い合わせフォームを作成してください。
-以下の機能が必要です：
-- 名前、メールアドレス、メッセージの入力欄
-- バリデーション
-- 送信確認
+Please create a contact form for a website.
+The following features are required:
+- Input fields for name, email address, and message
+- Validation
+- Submission confirmation
 ```
 
-### エージェントの動作
+### Agent Operations
 
-1. 社長エージェントが要件を分析
-2. 部長エージェントがタスクを分割
-3. 課長エージェントが実装計画を作成
-4. 平社員エージェントが実装を実行
+1. President agent analyzes requirements
+2. Director agent divides tasks
+3. Section manager agent creates implementation plan
+4. Employee agent executes implementation
 
-## 5. 設定のカスタマイズ
+## 5. Configuration Customization
 
-### エージェント数の変更
+### Changing the Number of Agents
 
 ```yaml
 # config.yaml
 agents:
   section_manager:
-    count: 5  # 課長を5人に増やす
+    count: 5  # Increase section managers to 5
   employee:
-    count: 20  # 平社員を20人に増やす
+    count: 20  # Increase employees to 20
 ```
 
-### タイムアウトの調整
+### Adjusting Timeout
 
 ```yaml
 agents:
   president:
-    timeout: 180  # 180秒に延長
+    timeout: 180  # Extend to 180 seconds
 ```
 
-### LLMモデルの変更
+### Changing LLM Model
 
 ```yaml
 agents:
   president:
-    model: "gemini-2.5-pro"  # より高性能なモデルに
+    model: "gemini-2.5-pro"  # Switch to a more powerful model
 ```
 
-## トラブルシューティング
+## Troubleshooting
 
-### ビルドエラー
+### Build Errors
 
 ```bash
 make clean
@@ -131,45 +131,45 @@ make deps
 make build
 ```
 
-### 設定エラー
+### Configuration Errors
 
 ```bash
-# YAMLの構文チェック
+# Check YAML syntax
 cat config.yaml | grep -E "^\s*-"
 ```
 
-### Slack通知が届かない
+### Slack Notifications Not Arriving
 
-1. トークンが正しいか確認
-2. チャンネルIDが正しいか確認
-3. Botがチャンネルに追加されているか確認
+1. Verify the token is correct
+2. Verify the channel ID is correct
+3. Verify the Bot is added to the channel
 
-## 次のステップ
+## Next Steps
 
-- [設定ガイド](docs/CONFIGURATION.md)で詳細な設定方法を確認
-- [アーキテクチャドキュメント](docs/ARCHITECTURE.md)でシステムの仕組みを理解
-- [開発ガイド](docs/DEVELOPMENT.md)でカスタマイズ方法を学習
+- Check the [Configuration Guide](docs/CONFIGURATION.md) for detailed configuration methods
+- Understand the system architecture in the [Architecture Documentation](docs/ARCHITECTURE.md)
+- Learn customization methods in the [Development Guide](docs/DEVELOPMENT.md)
 
-## よくある質問
+## Frequently Asked Questions
 
-### Q: LLMの実装はどうなっていますか？
+### Q: What is the status of LLM implementation?
 
-A: 現在のバージョンは基盤実装です。Google ADKとの統合は今後実装予定です。
+A: The current version is a foundation implementation. Integration with Google ADK is planned for future implementation.
 
-### Q: エージェントはどこで動作しますか？
+### Q: Where do the agents run?
 
-A: 現在は単一プロセス内で動作します。gRPCインターフェースにより、将来的に分散実行も可能です。
+A: Currently they run within a single process. The gRPC interface will enable distributed execution in the future.
 
-### Q: カスタムエージェントを追加できますか？
+### Q: Can I add custom agents?
 
-A: はい。[開発ガイド](docs/DEVELOPMENT.md)を参照してください。
+A: Yes. Please refer to the [Development Guide](docs/DEVELOPMENT.md).
 
-### Q: 商用利用できますか？
+### Q: Can I use this commercially?
 
-A: ライセンスを確認してください。
+A: Please check the license.
 
-## サポート
+## Support
 
-- バグ報告: [GitHub Issues](https://github.com/kpango/BuildBureau/issues)
-- 質問: [GitHub Discussions](https://github.com/kpango/BuildBureau/discussions)
-- 貢献: [Contributing Guide](CONTRIBUTING.md)
+- Bug Reports: [GitHub Issues](https://github.com/kpango/BuildBureau/issues)
+- Questions: [GitHub Discussions](https://github.com/kpango/BuildBureau/discussions)
+- Contributions: [Contributing Guide](CONTRIBUTING.md)
