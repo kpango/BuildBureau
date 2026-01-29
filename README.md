@@ -6,6 +6,40 @@ BuildBureau is a hierarchical multi-agent system built in Go that simulates an e
 
 BuildBureau implements a multi-agent system where agents are organized in a corporate hierarchy:
 
+```
+Client Request
+      ↓
+┌─────────────────────────────────────────┐
+│  CEO Agent + CEO Secretary              │
+│  • Receives client requests             │
+│  • Clarifies requirements                │
+│  • Delegates to managers                 │
+└─────────────────┬───────────────────────┘
+                  ↓
+        ┌─────────┴─────────┐
+        ↓                   ↓
+┌──────────────────┐  ┌──────────────────┐
+│ Manager 1        │  │ Manager 2        │
+│ + Secretary      │  │ + Secretary      │
+│ • Research       │  │ • Research       │
+│ • Planning       │  │ • Planning       │
+└────────┬─────────┘  └────────┬─────────┘
+         ↓                     ↓
+    ┌────┴────┐           ┌────┴────┐
+    ↓         ↓           ↓         ↓
+┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+│ Lead   │ │ Lead   │ │ Lead   │ │ Lead   │
+│ + Sec  │ │ + Sec  │ │ + Sec  │ │ + Sec  │
+└───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘
+    ↓          ↓          ↓          ↓
+┌────┴───┐ ┌───┴───┐ ┌───┴───┐ ┌───┴───┐
+│Employee│ │Employee│ │Employee│ │Employee│
+│ (x2)   │ │ (x2)   │ │ (x2)   │ │ (x2)   │
+└────────┘ └────────┘ └────────┘ └────────┘
+```
+
+Each agent level has specific responsibilities:
+
 - **CEO Agent** - Receives client requests and delegates to managers
 - **CEO Secretary** - Documents requirements and manages knowledge base
 - **Manager Agents** - Break down projects into categories
