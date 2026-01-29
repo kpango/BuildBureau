@@ -1,0 +1,50 @@
+organization:
+  layers:
+    - name: President
+      agent: ./agents/president.yaml
+    - name: Secretary
+      count: 1
+      attach_to: [President, Director, Manager]
+      agent: ./agents/secretary.yaml
+    - name: Director
+      count: 1
+      agent: ./agents/director.yaml
+    - name: Manager
+      count: 1
+      agent: ./agents/manager.yaml
+    - name: Engineer
+      count: 2
+      agent: ./agents/engineer.yaml
+
+slack:
+  enabled: false
+  token: { env: SLACK_TOKEN }
+  channels: ["#alerts", "#progress"]
+  notify_on: ["task_assigned", "task_completed", "error"]
+
+llms:
+  default_model: gemini
+  api_keys:
+    gemini: { env: GEMINI_API_KEY }
+    openai: { env: OPENAI_API_KEY }
+    claude: { env: CLAUDE_API_KEY }
+    codex: { env: CODEX_API_KEY }
+    qwen: { env: QWEN_API_KEY }
+
+memory:
+  enabled: true
+  sqlite:
+    enabled: true
+    path: ./data/buildbureau.db
+    in_memory: false
+  vald:
+    enabled: false
+    host: localhost
+    port: 8081
+    dimension: 768
+    pool_size: 3
+  retention:
+    conversation_days: 30
+    task_days: 60
+    knowledge_days: 0 # 0 means forever
+    max_entries: 10000

@@ -1,0 +1,24 @@
+# Template for refactoring BuildBureau code
+task:
+  type: refactoring
+  title: "Refactor [Component]"
+  description: |
+    Refactor existing code in BuildBureau:
+
+    [Describe what needs refactoring and why]
+
+  requirements:
+    - Maintain backwards compatibility
+    - No breaking changes to public APIs
+    - Improve code quality/readability
+    - Update tests if needed
+
+  context:
+    codebase: BuildBureau
+    component: [internal/agent, internal/memory, etc.]
+
+  success_criteria:
+    - Code is cleaner/more maintainable
+    - All existing tests still pass
+    - No functionality changes
+    - Performance maintained or improved
