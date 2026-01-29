@@ -1,0 +1,54 @@
+system:
+  timeout_seconds: 60
+  max_retries: 3
+  log_level: "INFO"
+
+slack:
+  enabled: true
+  token_env: "SLACK_BOT_TOKEN"
+  channel_id: "C12345678"
+  events:
+    - project_start
+    - task_complete
+    - error
+    - project_complete
+
+models:
+  gpt4:
+    name: "gpt-4"
+    api_key_env: "OPENAI_API_KEY"
+  gemini:
+    name: "gemini-1.5-pro"
+    api_key_env: "GEMINI_API_KEY"
+  claude:
+    name: "claude-3-opus"
+    api_key_env: "CLAUDE_API_KEY"
+
+agents:
+  president:
+    role: "President"
+    count: 1
+    model: "gpt4"
+    system_prompt: "You are the President of BuildBureau. Your goal is to understand client requirements and create a high-level project plan."
+    allowed_tools: ["web_search"]
+
+  manager:
+    role: "Manager"
+    count: 1
+    model: "claude"
+    system_prompt: "You are a Department Manager. You receive a project plan and break it down into section tasks."
+    allowed_tools: ["web_search", "knowledge_base"]
+
+  section:
+    role: "SectionChief"
+    count: 3
+    model: "gemini"
+    system_prompt: "You are a Section Chief. You receive section tasks and create detailed implementation specifications."
+    allowed_tools: ["knowledge_base"]
+
+  worker:
+    role: "Worker"
+    count: 5
+    model: "gemini"
+    system_prompt: "You are a Worker. You receive implementation specs and write the code or documentation."
+    allowed_tools: ["code_execution", "file_system"]
