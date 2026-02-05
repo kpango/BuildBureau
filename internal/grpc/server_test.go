@@ -10,8 +10,6 @@ import (
 	"github.com/kpango/BuildBureau/pkg/types"
 )
 
-const statusCompleted = "completed"
-
 func TestServer_StartStop(t *testing.T) {
 	// Create a test agent
 	config := &types.AgentConfig{
