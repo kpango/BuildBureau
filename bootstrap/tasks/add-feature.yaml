@@ -1,0 +1,25 @@
+# Template for adding new features to BuildBureau
+task:
+  type: feature_addition
+  title: "Add [Feature Name]"
+  description: |
+    Add a new feature to BuildBureau:
+
+    [Describe the feature you want to add]
+
+  requirements:
+    - Feature should integrate with existing architecture
+    - Include tests for new functionality
+    - Update documentation (README, AGENTS.md if needed)
+    - Follow Go best practices and BuildBureau patterns
+
+  context:
+    codebase: BuildBureau
+    language: Go
+    architecture: Multi-agent system with 5-layer hierarchy
+
+  success_criteria:
+    - Feature works as specified
+    - All tests pass
+    - Code follows existing patterns
+    - Documentation is updated

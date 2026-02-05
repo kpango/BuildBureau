@@ -1,0 +1,84 @@
+# Labels configuration for auto-labeling PRs based on file patterns
+# Format: label name as key, with changed-files rules
+
+go:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.go"
+          - "go.mod"
+          - "go.sum"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**/*"
+          - "examples/**/*.md"
+
+ci/cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**/*"
+          - ".github/workflows/**/*"
+          - "Makefile"
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/Dockerfile*"
+          - "docker-compose*.yml"
+          - "docker/**/*"
+          - ".dockerignore"
+
+configuration:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.yaml"
+          - "**/*.yml"
+          - "**/*.json"
+          - "**/*.toml"
+          - "config.*"
+          - ".env*"
+
+internal:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "internal/**/*"
+
+pkg:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pkg/**/*"
+
+agents:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "agents/**/*"
+
+cli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "cmd/**/*"
+
+testing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*_test.go"
+          - "test/**/*"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "go.mod"
+          - "go.sum"
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "SECURITY.md"
+
+performance:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*_bench_test.go"
+          - "**/*benchmark*"

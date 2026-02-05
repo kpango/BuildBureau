@@ -1,0 +1,58 @@
+organization:
+  layers:
+    # Top layer - President
+    - name: President
+      agent: ./agents/president.yaml
+
+    # Secretary layer - attached to President, Director, and Manager
+    - name: Secretary
+      count: 3
+      attach_to: [President, Director, Manager]
+      agent: ./agents/secretary.yaml
+
+    # Director layer - handles research and decomposition
+    - name: Director
+      count: 2
+      agent: ./agents/director.yaml
+
+    # Manager layer - creates designs and specifications
+    - name: Manager
+      count: 3
+      agent: ./agents/manager.yaml
+
+    # Engineer layer - implements the code
+    - name: Engineer
+      count: 5
+      agent: ./agents/engineer.yaml
+
+# Slack notifications (optional)
+slack:
+  enabled: true
+  token: { env: SLACK_TOKEN }
+  channels:
+    - "#buildbureau-alerts"
+    - "#buildbureau-progress"
+    - "#engineering-tasks"
+  notify_on:
+    - "task_assigned"
+    - "task_completed"
+    - "error"
+    - "milestone_reached"
+
+# LLM configuration
+llms:
+  default_model: gemini
+
+  # API keys from environment variables
+  api_keys:
+    gemini: { env: GEMINI_API_KEY }
+    claude: { env: CLAUDE_API_KEY }
+    codex: { env: CODEX_API_KEY }
+    qwen: { env: QWEN_API_KEY }
+
+  # Model preferences for different agent types (future feature)
+  # agent_models:
+  #   President: gemini
+  #   Director: claude
+  #   Manager: gemini
+  #   Engineer: codex

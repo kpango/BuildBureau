@@ -1,0 +1,44 @@
+# BuildBureau Bootstrap Configuration
+# This configuration enables BuildBureau to build and improve itself
+
+organization:
+  layers:
+    - name: President
+      agent: ./bootstrap/agents/president.yaml
+    - name: Secretary
+      count: 1
+      attach_to: [President, Director, Manager]
+      agent: ./bootstrap/agents/secretary.yaml
+    - name: Director
+      count: 1
+      agent: ./bootstrap/agents/director.yaml
+    - name: Manager
+      count: 2
+      agent: ./bootstrap/agents/manager.yaml
+    - name: Engineer
+      count: 3
+      agent: ./bootstrap/agents/engineer.yaml
+
+slack:
+  enabled: false
+
+llms:
+  default_model: gemini
+  api_keys:
+    gemini: { env: GEMINI_API_KEY }
+    openai: { env: OPENAI_API_KEY }
+    claude: { env: CLAUDE_API_KEY }
+
+memory:
+  enabled: true
+  sqlite:
+    enabled: true
+    path: ./data/bootstrap.db
+    in_memory: false
+  vald:
+    enabled: false
+  retention:
+    conversation_days: 90
+    task_days: 180
+    knowledge_days: 0 # Keep forever - self-improvement knowledge is valuable
+    max_entries: 50000

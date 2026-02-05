@@ -27,6 +27,18 @@ go.work.sum
 # env file
 .env
 
+# BuildBureau binary
+buildbureau
+
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Makefile tool installation stamps
+.make/

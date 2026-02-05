@@ -1,0 +1,24 @@
+# Template for optimization tasks
+task:
+  type: optimization
+  title: "Optimize [Component/Feature]"
+  description: |
+    Optimize performance or resource usage:
+
+    [Describe what needs optimization]
+
+  requirements:
+    - Measure before/after performance
+    - Don't sacrifice readability without good reason
+    - Include benchmarks
+    - Document optimization decisions
+
+  context:
+    codebase: BuildBureau
+    target: [Memory usage, CPU, Latency, etc.]
+
+  success_criteria:
+    - Measurable performance improvement
+    - No regression in functionality
+    - Benchmarks show improvement
+    - Code remains maintainable

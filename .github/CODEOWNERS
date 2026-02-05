@@ -1,0 +1,46 @@
+# Code Owners
+# This file defines individuals or teams that are responsible for code in this repository.
+# Order is important; the last matching pattern takes the most precedence.
+
+# Default owners for everything in the repo
+* @kpango
+
+# Documentation
+*.md @kpango
+/docs/ @kpango
+
+# Go code
+*.go @kpango
+go.mod @kpango
+go.sum @kpango
+
+# Build and CI/CD
+Makefile @kpango
+.github/ @kpango
+.github/workflows/ @kpango
+Dockerfile @kpango
+docker-compose.yml @kpango
+
+# Configuration files
+*.yaml @kpango
+*.yml @kpango
+config.yaml @kpango
+
+# Core packages
+/pkg/ @kpango
+/internal/ @kpango
+
+# Agents
+/agents/ @kpango
+
+# CLI
+/cmd/ @kpango
+
+# Examples
+/examples/ @kpango
+
+# Tests
+*_test.go @kpango
+
+# Security
+SECURITY.md @kpango
