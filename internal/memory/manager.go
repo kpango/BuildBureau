@@ -307,6 +307,10 @@ func (m *Manager) calculateExpiration(memType types.MemoryType) time.Time {
 		days = m.config.Retention.TaskDays
 	case types.MemoryTypeKnowledge:
 		days = m.config.Retention.KnowledgeDays
+	case types.MemoryTypeDecision:
+		days = m.config.Retention.KnowledgeDays // Use knowledge retention for decisions
+	case types.MemoryTypeContext:
+		days = m.config.Retention.TaskDays // Use task retention for context
 	default:
 		days = 30 // Default to 30 days
 	}

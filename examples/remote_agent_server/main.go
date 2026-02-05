@@ -95,5 +95,5 @@ func main() {
 	log.Printf("Endpoints:")
 	log.Printf("  - POST http://localhost:%s/v1/generate", port)
 	log.Printf("  - GET  http://localhost:%s/v1/status", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil)) //nolint:gosec // G114: Example server, timeouts not critical
 }

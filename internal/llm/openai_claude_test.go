@@ -54,7 +54,7 @@ func TestOpenAIProvider(t *testing.T) {
 
 func TestOpenAIProviderWithCustomModel(t *testing.T) {
 	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping OpenAI test: OPENAI_API_KEY not set")
 	}
 
@@ -81,7 +81,7 @@ func TestOpenAIProviderWithCustomModel(t *testing.T) {
 
 func TestClaudeProvider(t *testing.T) {
 	apiKey := os.Getenv("CLAUDE_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping Claude test: CLAUDE_API_KEY not set")
 	}
 
@@ -125,7 +125,7 @@ func TestClaudeProvider(t *testing.T) {
 
 func TestClaudeProviderWithCustomModel(t *testing.T) {
 	apiKey := os.Getenv("CLAUDE_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping Claude test: CLAUDE_API_KEY not set")
 	}
 
@@ -158,9 +158,9 @@ func TestProviderComparison(t *testing.T) {
 	openaiKey := os.Getenv("OPENAI_API_KEY")
 	claudeKey := os.Getenv("CLAUDE_API_KEY")
 
-	hasGemini := geminiKey != "" && geminiKey != "demo-key"
-	hasOpenAI := openaiKey != "" && openaiKey != "demo-key"
-	hasClaude := claudeKey != "" && claudeKey != "demo-key"
+	hasGemini := geminiKey != "" && geminiKey != demoAPIKey
+	hasOpenAI := openaiKey != "" && openaiKey != demoAPIKey
+	hasClaude := claudeKey != "" && claudeKey != demoAPIKey
 
 	if !hasGemini && !hasOpenAI && !hasClaude {
 		t.Skip("Skipping comparison test: no real API keys available")

@@ -18,7 +18,7 @@ func NewLoader() *Loader {
 
 // Load reads and parses a YAML configuration file.
 func (l *Loader) Load(path string) (*types.Config, error) {
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(path) //nolint:gosec // G304: Config file path is from trusted source
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
@@ -38,7 +38,7 @@ func (l *Loader) Load(path string) (*types.Config, error) {
 
 // LoadAgentConfig loads an individual agent configuration file.
 func (l *Loader) LoadAgentConfig(path string) (*types.AgentConfig, error) {
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(path) //nolint:gosec // G304: Agent config file path is from trusted source
 	if err != nil {
 		return nil, fmt.Errorf("failed to read agent config file: %w", err)
 	}

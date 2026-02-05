@@ -37,10 +37,10 @@ llms:
 	if _, err := tmpfile.WriteString(configContent); err != nil {
 		t.Fatal(err)
 	}
-	tmpfile.Close()
+	_ = tmpfile.Close()
 
 	// Set required environment variables
-	os.Setenv("GEMINI_API_KEY", "test-key")
+	_ = os.Setenv("GEMINI_API_KEY", "test-key")
 	defer os.Unsetenv("GEMINI_API_KEY")
 
 	// Test loading
@@ -83,7 +83,7 @@ llms:
 	if _, err := tmpfile.WriteString(configContent); err != nil {
 		t.Fatal(err)
 	}
-	tmpfile.Close()
+	_ = tmpfile.Close()
 
 	// Make sure the env var is not set
 	os.Unsetenv("MISSING_API_KEY")

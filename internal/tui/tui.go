@@ -21,21 +21,25 @@ const (
 )
 
 var (
+	//nolint:gochecknoglobals // TUI styles are package-level configuration
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.Color("205")).
 			MarginLeft(2)
 
+	//nolint:gochecknoglobals // TUI styles are package-level configuration
 	helpStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("241")).
 			MarginLeft(2)
 
+	//nolint:gochecknoglobals // TUI styles are package-level configuration
 	inputStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("62")).
 			Padding(0, 1).
 			MarginLeft(2)
 
+	//nolint:gochecknoglobals // TUI styles are package-level configuration
 	outputStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("240")).

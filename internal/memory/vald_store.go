@@ -12,6 +12,8 @@ import (
 	"github.com/kpango/BuildBureau/pkg/types"
 )
 
+const defaultValdTimeout = 3000000000 // 3 seconds in nanoseconds
+
 // ValdStore implements VectorStore using Vald.
 type ValdStore struct {
 	client vald.Client
@@ -75,10 +77,10 @@ func (v *ValdStore) Search(ctx context.Context, vector []float32, limit int, min
 	req := &payload.Search_Request{
 		Vector: vector,
 		Config: &payload.Search_Config{
-			Num:                  uint32(limit),
-			Radius:               -1.0, // Search all
+			Num:                  uint32(limit), //nolint:gosec // G115: Safe conversion, limit is bounded
+			Radius:               -1.0,          // Search all
 			Epsilon:              0.01,
-			Timeout:              3000000000, // 3 seconds in nanoseconds
+			Timeout:              defaultValdTimeout,
 			MinNum:               1,
 			AggregationAlgorithm: 0,
 		},

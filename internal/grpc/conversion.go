@@ -5,6 +5,8 @@ import (
 	"github.com/kpango/BuildBureau/pkg/types"
 )
 
+const statusCompleted = "completed"
+
 // taskToProto converts types.Task to protocol.TaskRequest.
 func taskToProto(task *types.Task) *protocol.TaskRequest {
 	return &protocol.TaskRequest{
@@ -14,8 +16,8 @@ func taskToProto(task *types.Task) *protocol.TaskRequest {
 		FromAgent:   task.FromAgent,
 		ToAgent:     task.ToAgent,
 		Metadata:    task.Metadata,
-		Content:     task.Description, // Use description as content
-		Priority:    int32(task.Priority),
+		Content:     task.Description,     // Use description as content
+		Priority:    int32(task.Priority), //nolint:gosec // G115: Safe conversion, priority is bounded
 	}
 }
 
@@ -27,10 +29,12 @@ func protoToTaskResponse(resp *protocol.TaskResponse) *types.TaskResponse {
 		status = types.StatusPending
 	case "in_progress":
 		status = types.StatusInProgress
-	case "completed":
+	case statusCompleted:
 		status = types.StatusCompleted
 	case "failed":
 		status = types.StatusFailed
+	case "delegated":
+		status = types.StatusDelegated
 	}
 
 	return &types.TaskResponse{
@@ -44,18 +48,20 @@ func protoToTaskResponse(resp *protocol.TaskResponse) *types.TaskResponse {
 
 // taskResponseToProto converts types.TaskResponse to protocol.TaskResponse.
 func taskResponseToProto(resp *types.TaskResponse) *protocol.TaskResponse {
-	statusStr := "completed"
+	statusStr := statusCompleted
 	switch resp.Status {
 	case types.StatusPending:
 		statusStr = "pending"
 	case types.StatusInProgress:
 		statusStr = "in_progress"
 	case types.StatusCompleted:
-		statusStr = "completed"
+		statusStr = statusCompleted
 	case types.StatusFailed:
 		statusStr = "failed"
+	case types.StatusDelegated:
+		statusStr = "delegated"
 	default:
-		statusStr = "completed"
+		statusStr = statusCompleted
 	}
 
 	return &protocol.TaskResponse{

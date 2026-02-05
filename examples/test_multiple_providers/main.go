@@ -66,7 +66,7 @@ func testGemini(ctx context.Context, prompt string) {
 func testOpenAI(ctx context.Context, prompt string) {
 	fmt.Println("--- Testing OpenAI ---")
 	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		fmt.Println("⚠️  OPENAI_API_KEY not set. Skipping.")
 		return
 	}
@@ -99,7 +99,7 @@ func testOpenAI(ctx context.Context, prompt string) {
 func testClaude(ctx context.Context, prompt string) {
 	fmt.Println("--- Testing Claude ---")
 	apiKey := os.Getenv("CLAUDE_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		fmt.Println("⚠️  CLAUDE_API_KEY not set. Skipping.")
 		return
 	}
@@ -153,7 +153,7 @@ func compareProviders(ctx context.Context) {
 
 	for _, p := range providers {
 		apiKey := os.Getenv(p.envKey)
-		if apiKey == "" || apiKey == "demo-key" {
+		if apiKey == "" || apiKey == demoAPIKey {
 			fmt.Printf("⚠️  %s: API key not set\n", p.name)
 			continue
 		}

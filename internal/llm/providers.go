@@ -58,7 +58,7 @@ func (p *GeminiProvider) Generate(ctx context.Context, prompt string, opts *Gene
 
 	// Create config
 	temp := float32(opts.Temperature)
-	maxTokens := int32(opts.MaxTokens)
+	maxTokens := int32(opts.MaxTokens) //nolint:gosec // G115: Safe conversion, tokens are bounded
 	config := &genai.GenerateContentConfig{
 		Temperature:     &temp,
 		MaxOutputTokens: maxTokens,

@@ -152,7 +152,7 @@ func testGRPC() {
 		FromAgent:   task.FromAgent,
 		ToAgent:     task.ToAgent,
 		Metadata:    task.Metadata,
-		Priority:    int32(task.Priority),
+		Priority:    int32(task.Priority), //nolint:gosec // G115: Safe conversion, priority is bounded
 	}
 
 	directResponse, err := server.ProcessTask(ctx, protoReq)

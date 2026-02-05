@@ -56,7 +56,8 @@ func TestClient_GetStatus_NoServer(t *testing.T) {
 	defer cancel()
 
 	// This should fail because there's no server running
-	_, _, _, err := client.GetStatus(ctx, "test-agent")
+	status, completed, pending, err := client.GetStatus(ctx, "test-agent")
+	_, _, _ = status, completed, pending // Ignore unused return values
 	if err == nil {
 		t.Error("Expected error when connecting to non-existent server, got nil")
 	}

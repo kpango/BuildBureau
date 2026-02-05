@@ -43,7 +43,7 @@ func TestNewADKEngineerAgent(t *testing.T) {
 func TestNewADKManagerAgent(t *testing.T) {
 	// Skip if no API key
 	apiKey := os.Getenv("GEMINI_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping ADK test: GEMINI_API_KEY not set or using demo value")
 	}
 
@@ -69,7 +69,7 @@ func TestNewADKManagerAgent(t *testing.T) {
 func TestNewADKDirectorAgent(t *testing.T) {
 	// Skip if no API key
 	apiKey := os.Getenv("GEMINI_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping ADK test: GEMINI_API_KEY not set or using demo value")
 	}
 
@@ -95,7 +95,7 @@ func TestNewADKDirectorAgent(t *testing.T) {
 func TestADKAgent_ProcessTask(t *testing.T) {
 	// Skip if no API key
 	apiKey := os.Getenv("GEMINI_API_KEY")
-	if apiKey == "" || apiKey == "demo-key" {
+	if apiKey == "" || apiKey == demoAPIKey {
 		t.Skip("Skipping ADK test: GEMINI_API_KEY not set or using demo value")
 	}
 
