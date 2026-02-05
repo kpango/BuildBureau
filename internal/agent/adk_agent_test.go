@@ -110,8 +110,8 @@ func TestADKAgent_ProcessTask(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	if err := engineer.Start(ctx); err != nil {
-		t.Fatalf("Failed to start engineer: %v", err)
+	if startErr := engineer.Start(ctx); startErr != nil {
+		t.Fatalf("Failed to start engineer: %v", startErr)
 	}
 	defer engineer.Stop(ctx)
 

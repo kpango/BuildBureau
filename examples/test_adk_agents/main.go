@@ -77,8 +77,8 @@ func testADKAgent(agentType, agentID string, config *types.AgentConfig, task *ty
 	fmt.Printf("✓ ADK %s created (Model: %s)\n", agentType, adkAgent.GetModelName())
 
 	ctx := context.Background()
-	if err := adkAgent.Start(ctx); err != nil {
-		log.Fatalf("Failed to start %s: %v", agentType, err)
+	if startErr := adkAgent.Start(ctx); startErr != nil {
+		log.Fatalf("Failed to start %s: %v", agentType, startErr)
 	}
 	defer adkAgent.Stop(ctx)
 
@@ -161,8 +161,8 @@ func testDirectorAgent(apiKey string) {
 	fmt.Printf("✓ ADK Director created (Model: %s)\n", director.GetModelName())
 
 	ctx := context.Background()
-	if err := director.Start(ctx); err != nil {
-		log.Fatalf("Failed to start director: %v", err)
+	if startErr := director.Start(ctx); startErr != nil {
+		log.Fatalf("Failed to start director: %v", startErr)
 	}
 	defer director.Stop(ctx)
 

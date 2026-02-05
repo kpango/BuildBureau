@@ -8,6 +8,10 @@ import (
 	"github.com/kpango/BuildBureau/pkg/types"
 )
 
+const (
+	defaultSimilarTasksLimit = 3
+)
+
 // EngineerAgent represents an engineer agent that implements code using LLM.
 type EngineerAgent struct {
 	*BaseAgent
@@ -37,7 +41,7 @@ func (a *EngineerAgent) ProcessTask(ctx context.Context, task *types.Task) (*typ
 	// Check memory for similar past implementations
 	var contextFromMemory string
 	if mem := a.GetMemory(); mem != nil {
-		relatedTasks, err := mem.GetRelatedTasks(ctx, task.Description, 3)
+		relatedTasks, err := mem.GetRelatedTasks(ctx, task.Description, defaultSimilarTasksLimit)
 		if err == nil && len(relatedTasks) > 0 {
 			result += fmt.Sprintf("Found %d related past implementation(s) to learn from.\n", len(relatedTasks))
 			contextFromMemory = "\n\n=== Context from Past Implementations ===\n"

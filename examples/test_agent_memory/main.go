@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== BuildBureau Agent Memory Integration Demo ===\n")
+	fmt.Println("=== BuildBureau Agent Memory Integration Demo ===")
 
 	ctx := context.Background()
 
@@ -92,7 +92,7 @@ func main() {
 	secretary := agent.NewSecretaryAgent("sec-001", secretaryConfig)
 	secretary.SetMemoryManager(memManager)
 	secretary.Start(ctx)
-	fmt.Println("✓ Secretary Agent created with memory\n")
+	fmt.Println("✓ Secretary Agent created with memory")
 
 	// Simulate Task 1: REST API
 	fmt.Println("--- Task 1: REST API for User Management ---")

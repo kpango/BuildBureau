@@ -48,7 +48,7 @@ func protoToTaskResponse(resp *protocol.TaskResponse) *types.TaskResponse {
 
 // taskResponseToProto converts types.TaskResponse to protocol.TaskResponse.
 func taskResponseToProto(resp *types.TaskResponse) *protocol.TaskResponse {
-	statusStr := statusCompleted
+	var statusStr string
 	switch resp.Status {
 	case types.StatusPending:
 		statusStr = "pending"

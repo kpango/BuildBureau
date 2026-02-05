@@ -125,8 +125,8 @@ func (s *Server) GetStatus(ctx context.Context, req *protocol.StatusRequest) (*p
 		GetStats() (int, int)
 	}); ok {
 		active, completed := baseAgent.GetStats()
-		activeTasks = int32(active)
-		completedTasks = int32(completed)
+		activeTasks = int32(active)       //nolint:gosec // G115: Task counts are bounded, safe conversion
+		completedTasks = int32(completed) //nolint:gosec // G115: Task counts are bounded, safe conversion
 	}
 
 	return &protocol.StatusResponse{

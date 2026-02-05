@@ -34,8 +34,8 @@ llms:
 	}
 	defer os.Remove(tmpfile.Name())
 
-	if _, err := tmpfile.WriteString(configContent); err != nil {
-		t.Fatal(err)
+	if _, writeErr := tmpfile.WriteString(configContent); writeErr != nil {
+		t.Fatal(writeErr)
 	}
 	_ = tmpfile.Close()
 
@@ -80,8 +80,8 @@ llms:
 	}
 	defer os.Remove(tmpfile.Name())
 
-	if _, err := tmpfile.WriteString(configContent); err != nil {
-		t.Fatal(err)
+	if _, writeErr := tmpfile.WriteString(configContent); writeErr != nil {
+		t.Fatal(writeErr)
 	}
 	_ = tmpfile.Close()
 
@@ -96,7 +96,7 @@ llms:
 }
 
 func TestGetEnvValue(t *testing.T) {
-	os.Setenv("TEST_VAR", "test-value")
+	_ = os.Setenv("TEST_VAR", "test-value") //nolint:gosec // G104: Test setup, error not critical
 	defer os.Unsetenv("TEST_VAR")
 
 	// Test getting environment variable value

@@ -73,7 +73,7 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp) //nolint:gosec // G104: Error handling not critical in example server
 	})
 
 	http.HandleFunc("/v1/status", func(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +84,7 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(status)
+		_ = json.NewEncoder(w).Encode(status) //nolint:gosec // G104: Error handling not critical in example server
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

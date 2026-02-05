@@ -31,8 +31,8 @@ func main() {
 
 	// Start organization
 	ctx := context.Background()
-	if err := org.Start(ctx); err != nil {
-		log.Fatalf("Failed to start organization: %v", err)
+	if startErr := org.Start(ctx); startErr != nil {
+		log.Fatalf("Failed to start organization: %v", startErr)
 	}
 	defer org.Stop(ctx)
 

@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== BuildBureau Implementation Examples ===\n")
+	fmt.Println("=== BuildBureau Implementation Examples ===")
 
 	// Example 1: Remote Agent API (HTTP)
 	fmt.Println("1. Testing Remote Agent API (HTTP)")

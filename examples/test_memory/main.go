@@ -54,8 +54,8 @@ func main() {
 		Tags: []string{"rest-api", "authentication", "user-management"},
 	}
 
-	if err := manager.StoreMemory(ctx, conversationEntry); err != nil {
-		log.Fatalf("Failed to store conversation: %v", err)
+	if storeErr := manager.StoreMemory(ctx, conversationEntry); storeErr != nil {
+		log.Fatalf("Failed to store conversation: %v", storeErr)
 	}
 	fmt.Printf("✓ Stored conversation with ID: %s\n\n", conversationEntry.ID)
 
@@ -84,8 +84,8 @@ func main() {
 		Tags: []string{"code-generation", "rest-api", "completed"},
 	}
 
-	if err := manager.StoreMemory(ctx, taskEntry); err != nil {
-		log.Fatalf("Failed to store task: %v", err)
+	if storeErr := manager.StoreMemory(ctx, taskEntry); storeErr != nil {
+		log.Fatalf("Failed to store task: %v", storeErr)
 	}
 	fmt.Printf("✓ Stored task with ID: %s\n\n", taskEntry.ID)
 
@@ -103,8 +103,8 @@ func main() {
 		Tags: []string{"best-practice", "security", "authentication"},
 	}
 
-	if err := manager.StoreMemory(ctx, knowledgeEntry); err != nil {
-		log.Fatalf("Failed to store knowledge: %v", err)
+	if storeErr := manager.StoreMemory(ctx, knowledgeEntry); storeErr != nil {
+		log.Fatalf("Failed to store knowledge: %v", storeErr)
 	}
 	fmt.Printf("✓ Stored knowledge with ID: %s\n\n", knowledgeEntry.ID)
 
