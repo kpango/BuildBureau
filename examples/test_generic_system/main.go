@@ -15,7 +15,7 @@ func main() {
 
 	// Load configuration
 	loader := config.NewLoader()
-	cfg, err := loader.LoadConfig("./config.yaml")
+	cfg, err := loader.Load("./config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
