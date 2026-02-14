@@ -249,8 +249,7 @@ make ci-test      # Run tests
 | **GolangCI-Lint** | Code quality            | [![golangci-lint](https://github.com/kpango/BuildBureau/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/kpango/BuildBureau/actions/workflows/golangci-lint.yml) |
 | **Coverage**      | Test coverage           | [![Coverage](https://github.com/kpango/BuildBureau/actions/workflows/coverage.yml/badge.svg)](https://github.com/kpango/BuildBureau/actions/workflows/coverage.yml)                |
 
-📚 **See [GitHub Actions Documentation](docs/GITHUB_ACTIONS.md) for complete
-guide** | **[Quick Reference](GITHUB_ACTIONS_SUMMARY.md)**
+📚 **See [GitHub Actions Documentation](docs/GITHUB_ACTIONS.md) for complete guide**
 
 ## Quick Start
 
@@ -569,8 +568,6 @@ BuildBureau/
 
 - **[🚀 GitHub Actions Guide](docs/GITHUB_ACTIONS.md)**: Complete CI/CD workflow
   documentation
-- **[📋 GitHub Actions Quick Ref](GITHUB_ACTIONS_SUMMARY.md)**: Quick reference
-  for workflows and commands
 - **[🛠️ Makefile Guide](docs/MAKEFILE.md)**: Complete Makefile documentation
 - **[🐳 Docker Guide](docs/DOCKER.md)**: Docker setup and deployment
 - **[Contributing Guide](CONTRIBUTING.md)**: How to contribute to the project

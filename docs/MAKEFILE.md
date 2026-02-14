@@ -28,7 +28,7 @@ and organization:
   - `ci.mk` - CI/CD targets
   - `git.mk` - Release and version management
 
-For details on the modular structure, see [MAKEFILE_REFACTOR.md](../MAKEFILE_REFACTOR.md).
+The modular structure improves maintainability by separating concerns into focused files.
 
 ## Quick Start
 
