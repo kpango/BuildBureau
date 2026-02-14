@@ -1,0 +1,24 @@
+# Template for adding tests
+task:
+  type: testing
+  title: "Add Tests for [Component]"
+  description: |
+    Add or improve tests for BuildBureau:
+
+    [Describe what needs testing]
+
+  requirements:
+    - Follow existing test patterns
+    - Aim for high coverage of critical paths
+    - Include edge cases
+    - Make tests maintainable
+
+  context:
+    codebase: BuildBureau
+    component: [Which part needs tests]
+
+  success_criteria:
+    - Tests cover specified functionality
+    - All tests pass
+    - Tests are clear and maintainable
+    - Coverage increases

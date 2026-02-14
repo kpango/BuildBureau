@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package protocol;
+
+option go_package = "github.com/kpango/BuildBureau/pkg/protocol";
+
+// AgentService defines the gRPC service for agent communication
+service AgentService {
+  // ProcessTask sends a task to an agent for processing
+  rpc ProcessTask(TaskRequest) returns (TaskResponse);
+  
+  // GetStatus retrieves the current status of an agent
+  rpc GetStatus(StatusRequest) returns (StatusResponse);
+  
+  // Notify sends a notification to an agent
+  rpc Notify(NotificationRequest) returns (NotificationResponse);
+}
+
+// TaskRequest represents a task to be processed
+message TaskRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string from_agent = 4;
+  string to_agent = 5;
+  map<string, string> metadata = 6;
+  string content = 7;
+  int32 priority = 8;
+}
+
+// TaskResponse represents the response from processing a task
+message TaskResponse {
+  string task_id = 1;
+  string status = 2;
+  string result = 3;
+  map<string, string> metadata = 4;
+  string error = 5;
+}
+
+// StatusRequest requests the status of an agent
+message StatusRequest {
+  string agent_id = 1;
+}
+
+// StatusResponse provides the status of an agent
+message StatusResponse {
+  string agent_id = 1;
+  string status = 2;
+  int32 active_tasks = 3;
+  int32 completed_tasks = 4;
+}
+
+// NotificationRequest sends a notification
+message NotificationRequest {
+  string from_agent = 1;
+  string to_agent = 2;
+  string notification_type = 3;
+  string message = 4;
+  map<string, string> metadata = 5;
+}
+
+// NotificationResponse acknowledges a notification
+message NotificationResponse {
+  bool acknowledged = 1;
+  string error = 2;
+}

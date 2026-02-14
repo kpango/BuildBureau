@@ -1,0 +1,56 @@
+# Git files
+.git
+.gitignore
+.github
+
+# Build artifacts
+buildbureau
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Data directories
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Documentation (copied separately if needed)
+*.md
+docs/
+examples/
+
+# Test files
+*_test.go
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Environment files (should use docker env vars instead)
+.env
+.env.local
+.env.*
+
+# CI/CD files
+.github/
+
+# Coverage files
+*.cover
+coverage.txt
+coverage.html

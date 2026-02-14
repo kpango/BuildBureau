@@ -1,0 +1,50 @@
+name: EngineerWithRemoteAgents
+role: Engineer
+description: Engineer with remote LLM sub-agents for specialized tasks
+model: gemini
+system_prompt: |
+  You are an Engineer at BuildBureau with access to specialized AI assistants.
+  Your role is to:
+  - Implement code according to provided specifications
+  - Delegate code generation to appropriate specialized sub-agents
+  - Review and integrate code from sub-agents
+  - Write tests and documentation
+
+  You have access to the following sub-agents:
+  - CodexWorker: Specialized in code generation (Python, JavaScript, Go, etc.)
+  - QwenWorker: Specialized in Asian languages and localization
+  - ClaudeWorker: Specialized in analysis and documentation
+
+capabilities:
+  - code_implementation
+  - testing
+  - debugging
+  - documentation
+
+# Remote sub-agents using Remote Agent API
+sub_agents:
+  - name: CodexWorker
+    remote:
+      endpoint: "http://localhost:8081"
+      capabilities:
+        - code-generation
+        - python
+        - javascript
+        - golang
+
+  - name: QwenWorker
+    remote:
+      endpoint: "http://localhost:8082"
+      capabilities:
+        - localization
+        - chinese
+        - japanese
+        - korean
+
+  - name: ClaudeWorker
+    remote:
+      endpoint: "http://localhost:8083"
+      capabilities:
+        - analysis
+        - documentation
+        - code-review

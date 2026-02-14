@@ -1,0 +1,129 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+version-template: '$MAJOR.$MINOR.$PATCH'
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'enhancement'
+      - 'feature'
+      - 'kind/feature'
+  
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'bug'
+      - 'fix'
+      - 'bugfix'
+      - 'kind/bug'
+  
+  - title: '🔒 Security'
+    labels:
+      - 'security'
+      - 'vulnerability'
+  
+  - title: '⚡ Performance'
+    labels:
+      - 'performance'
+      - 'optimization'
+  
+  - title: '📚 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+  
+  - title: '🧪 Testing'
+    labels:
+      - 'testing'
+      - 'test'
+  
+  - title: '🏗️ Build & CI/CD'
+    labels:
+      - 'ci/cd'
+      - 'build'
+      - 'github-actions'
+  
+  - title: '🔧 Maintenance'
+    labels:
+      - 'chore'
+      - 'maintenance'
+      - 'dependencies'
+      - 'refactor'
+  
+  - title: '💔 Breaking Changes'
+    labels:
+      - 'breaking-change'
+      - 'breaking'
+
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking-change'
+      - 'major'
+  minor:
+    labels:
+      - 'enhancement'
+      - 'feature'
+      - 'minor'
+  patch:
+    labels:
+      - 'bug'
+      - 'bugfix'
+      - 'fix'
+      - 'patch'
+      - 'chore'
+      - 'documentation'
+      - 'dependencies'
+  default: patch
+
+autolabeler:
+  - label: 'documentation'
+    files:
+      - '*.md'
+      - 'docs/**/*'
+    branch:
+      - '/docs{0,1}\/.+/'
+  
+  - label: 'bug'
+    branch:
+      - '/fix\/.+/'
+    title:
+      - '/fix/i'
+  
+  - label: 'enhancement'
+    branch:
+      - '/feature\/.+/'
+      - '/feat\/.+/'
+  
+  - label: 'chore'
+    branch:
+      - '/chore\/.+/'
+  
+  - label: 'ci/cd'
+    files:
+      - '.github/**/*'
+  
+  - label: 'dependencies'
+    files:
+      - 'go.mod'
+      - 'go.sum'
+
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+exclude-labels:
+  - 'skip-changelog'
+  - 'duplicate'
+  - 'invalid'
+  - 'wontfix'
+
+replacers:
+  # Remove conventional commits prefix
+  - search: '/^(feat|fix|docs|style|refactor|perf|test|chore|build|ci)(\(.+\))?: /i'
+    replace: ''
