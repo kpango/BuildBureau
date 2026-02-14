@@ -94,16 +94,25 @@ func TestOnce(t *testing.T) {
 	var once Once
 	var count int32
 
+	done := make(chan bool, 10)
 	for i := 0; i < 10; i++ {
-		go once.Do(func() {
-			atomic.AddInt32(&count, 1)
-		})
+		go func() {
+			once.Do(func() {
+				atomic.AddInt32(&count, 1)
+			})
+			done <- true
+		}()
 	}
 
-	time.Sleep(10 * time.Millisecond)
+	// Wait for all goroutines to complete
+	for i := 0; i < 10; i++ {
+		<-done
+	}
 
-	if count != 1 {
-		t.Errorf("expected count=1, got: %d", count)
+	// Use atomic load to avoid race condition
+	finalCount := atomic.LoadInt32(&count)
+	if finalCount != 1 {
+		t.Errorf("expected count=1, got: %d", finalCount)
 	}
 }
 
