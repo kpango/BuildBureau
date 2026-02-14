@@ -1,0 +1,124 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: "Notify Slack"
+description: "Send notification to Slack channel"
+inputs:
+  webhook_url:
+    description: "Slack webhook URL"
+    required: true
+  message:
+    description: "Message to send"
+    required: true
+  status:
+    description: "Status of the workflow (success, failure, cancelled)"
+    required: false
+    default: "info"
+  workflow_name:
+    description: "Name of the workflow"
+    required: false
+    default: ${{ github.workflow }}
+runs:
+  using: "composite"
+  steps:
+    - name: Send Slack notification
+      shell: bash
+      if: inputs.webhook_url != ''
+      run: |
+        STATUS_COLOR=""
+        STATUS_EMOJI=""
+        case "${{ inputs.status }}" in
+          success)
+            STATUS_COLOR="good"
+            STATUS_EMOJI=":white_check_mark:"
+            ;;
+          failure)
+            STATUS_COLOR="danger"
+            STATUS_EMOJI=":x:"
+            ;;
+          cancelled)
+            STATUS_COLOR="warning"
+            STATUS_EMOJI=":warning:"
+            ;;
+          *)
+            STATUS_COLOR="#439FE0"
+            STATUS_EMOJI=":information_source:"
+            ;;
+        esac
+
+        PAYLOAD=$(cat <<EOF
+        {
+          "attachments": [
+            {
+              "color": "${STATUS_COLOR}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${STATUS_EMOJI} ${{ inputs.workflow_name }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Repository:*\n${{ github.repository }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Event:*\n${{ github.event_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Actor:*\n${{ github.actor }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Message:*\n${{ inputs.message }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        EOF
+        )
+
+        curl -X POST -H 'Content-type: application/json' \
+          --data "${PAYLOAD}" \
+          "${{ inputs.webhook_url }}"

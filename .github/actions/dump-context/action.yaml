@@ -1,0 +1,68 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: "Dump GitHub Context"
+description: "Dumps all GitHub context information for debugging"
+runs:
+  using: "composite"
+  steps:
+    - name: Dump GitHub context
+      shell: bash
+      run: |
+        echo "::group::GitHub Context"
+        echo '${{ toJSON(github) }}' | jq '.'
+        echo "::endgroup::"
+    
+    - name: Dump Environment Variables
+      shell: bash
+      run: |
+        echo "::group::Environment Variables"
+        env | sort
+        echo "::endgroup::"
+    
+    - name: Dump Job Context
+      shell: bash
+      run: |
+        echo "::group::Job Context"
+        echo '${{ toJSON(job) }}' | jq '.'
+        echo "::endgroup::"
+    
+    - name: Dump Steps Context
+      shell: bash
+      run: |
+        echo "::group::Steps Context"
+        echo '${{ toJSON(steps) }}' | jq '.'
+        echo "::endgroup::"
+    
+    - name: Dump Runner Context
+      shell: bash
+      run: |
+        echo "::group::Runner Context"
+        echo '${{ toJSON(runner) }}' | jq '.'
+        echo "::endgroup::"
+    
+    - name: Dump Strategy Context
+      shell: bash
+      run: |
+        echo "::group::Strategy Context"
+        echo '${{ toJSON(strategy) }}' | jq '.'
+        echo "::endgroup::"
+    
+    - name: Dump Matrix Context
+      shell: bash
+      run: |
+        echo "::group::Matrix Context"
+        echo '${{ toJSON(matrix) }}' | jq '.'
+        echo "::endgroup::"

@@ -1,0 +1,197 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: ChatOps
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      comment:
+        description: "Comment to trigger actions e.g. /label, /rebase, /format"
+        required: true
+        type: string
+      pr_number:
+        description: "PR number to trigger actions on"
+        required: true
+        type: number
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  COMMENT_BODY: ${{ github.event_name == 'issue_comment' && github.event.comment.body || github.event.inputs.comment }}
+  USERNAME: ${{ github.event_name == 'issue_comment' && github.event.comment.user.login || github.event.sender.login }}
+  PR_NUM: ${{ github.event_name == 'issue_comment' && github.event.issue.number || github.event.inputs.pr_number }}
+
+jobs:
+  dump-contexts-to-log:
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    if: ${{ !contains(fromJSON('["dependabot[bot]", "github-actions[bot]"]'), github.event.comment.user.login) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/dump-context
+
+  label:
+    timeout-minutes: 30
+    permissions:
+      issues: write
+      pull-requests: write
+    needs: [dump-contexts-to-log]
+    name: Add labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Comments
+        id: check_comments_label
+        if: startsWith(env.COMMENT_BODY, '/label')
+        run: |
+          echo "BOOL_TRIGGERED=true" >> "$GITHUB_OUTPUT"
+          LABELS=$(echo "$COMMENT_BODY" | sed -e "s|/label||" -e 's/^[[:space:]]*//')
+          echo "LABELS=${LABELS}" >> "$GITHUB_OUTPUT"
+          echo "Requested labels: ${LABELS}"
+
+      - name: Add label
+        if: steps.check_comments_label.outputs.BOOL_TRIGGERED == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = '${{ steps.check_comments_label.outputs.LABELS }}'.split(' ').filter(l => l);
+            console.log('Adding labels:', labels);
+            
+            await github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labels
+            });
+
+  rebase:
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: [dump-contexts-to-log]
+    name: Rebase PR
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.comment.body, '/rebase')
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Automatic Rebase
+        uses: cirrus-actions/rebase@1.8
+        with:
+          autosquash: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  format:
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: [dump-contexts-to-log]
+    name: Format code
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.comment.body, '/format')
+    steps:
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            return {
+              ref: pr.data.head.ref,
+              sha: pr.data.head.sha,
+              repo: pr.data.head.repo.full_name
+            };
+
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ fromJSON(steps.pr.outputs.result).ref }}
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: ./.github/actions/setup-go
+
+      - name: Format code
+        run: |
+          make format || make fmt || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: auto-format code [skip ci]"
+            git push
+          else
+            echo "No formatting changes needed"
+          fi
+
+  help:
+    timeout-minutes: 10
+    permissions:
+      pull-requests: write
+      issues: write
+    needs: [dump-contexts-to-log]
+    name: Show help
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.comment.body, '/help')
+    steps:
+      - name: Post help comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 🤖 ChatOps Commands
+            
+            Available commands:
+            
+            - \`/label <label1> <label2> ...\` - Add labels to the PR/issue
+            - \`/rebase\` - Rebase the PR on the base branch
+            - \`/format\` - Auto-format the code
+            - \`/help\` - Show this help message
+            
+            ### Examples:
+            
+            \`\`\`
+            /label bug priority/high
+            /rebase
+            /format
+            \`\`\`
+            
+            Note: Some commands may require specific permissions.`;
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
