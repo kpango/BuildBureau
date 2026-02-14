@@ -1,0 +1,133 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: "Security Sensitive Files Checker"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100
+            });
+            
+            const files = pr.data.map(file => file.filename);
+            return files;
+
+      - name: Check for security-sensitive changes
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = ${{ steps.files.outputs.result }};
+            
+            const securityPatterns = [
+              /\.github\/workflows/,
+              /internal\/grpc/,
+              /internal\/llm/,
+              /\.dockerignore/,
+              /Dockerfile/,
+              /config\.yaml/,
+              /\.github\/dependabot/,
+              /go\.mod/,
+              /go\.sum/,
+              /internal\/config/,
+              /pkg\/protocol/,
+            ];
+            
+            const sensitiveFiles = files.filter(file => 
+              securityPatterns.some(pattern => pattern.test(file))
+            );
+            
+            const hasSecurityChanges = sensitiveFiles.length > 0;
+            
+            core.setOutput('has_security_changes', hasSecurityChanges);
+            core.setOutput('sensitive_files', sensitiveFiles.join('\n'));
+            
+            return hasSecurityChanges;
+
+      - name: Add security label
+        if: steps.check.outputs.has_security_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['security-review-required']
+            });
+
+      - name: Comment on PR
+        if: steps.check.outputs.has_security_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sensitiveFiles = `${{ steps.check.outputs.sensitive_files }}`.split('\n').filter(f => f);
+            const fileList = sensitiveFiles.map(f => `- \`${f}\``).join('\n');
+            
+            const body = `## 🔒 Security Review Required
+            
+            This PR modifies security-sensitive files:
+            
+            ${fileList}
+            
+            Please ensure:
+            - [ ] Changes have been reviewed by a security-conscious team member
+            - [ ] No secrets or credentials are exposed
+            - [ ] Security best practices are followed
+            - [ ] Tests cover security aspects
+            
+            If you believe this is a false positive, please comment below.`;
+            
+            // Check if comment already exists
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const existingComment = comments.data.find(comment => 
+              comment.body.includes('Security Review Required')
+            );
+            
+            if (!existingComment) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }

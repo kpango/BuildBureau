@@ -1,0 +1,204 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: "Repository Health Check"
+on:
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: ./.github/actions/setup-go
+
+      - name: Check repository structure
+        id: structure
+        run: |
+          echo "Checking repository structure..."
+          
+          ISSUES=""
+          
+          # Check for required files
+          REQUIRED_FILES=(
+            "README.md"
+            "LICENSE"
+            "CONTRIBUTING.md"
+            "go.mod"
+            "go.sum"
+            "Makefile"
+            ".gitignore"
+            ".github/workflows/ci.yml"
+            ".github/dependabot.yml"
+          )
+          
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              ISSUES="${ISSUES}- Missing file: \`${file}\`\n"
+            fi
+          done
+          
+          echo "structure_issues<<EOF" >> $GITHUB_OUTPUT
+          echo -e "${ISSUES}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          if [ -z "$ISSUES" ]; then
+            echo "has_structure_issues=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_structure_issues=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for outdated dependencies
+        id: deps
+        run: |
+          echo "Checking for outdated dependencies..."
+          
+          # Check Go dependencies
+          go list -u -m all 2>&1 | grep -E '\[' || echo "All dependencies up to date"
+          
+          # Save result
+          OUTDATED=$(go list -u -m all 2>&1 | grep -E '\[' | wc -l)
+          echo "outdated_count=${OUTDATED}" >> $GITHUB_OUTPUT
+
+      - name: Check code metrics
+        id: metrics
+        run: |
+          echo "Calculating code metrics..."
+          
+          # Count Go files
+          GO_FILES=$(find . -name "*.go" -not -path "./vendor/*" | wc -l)
+          echo "go_files=${GO_FILES}" >> $GITHUB_OUTPUT
+          
+          # Count test files
+          TEST_FILES=$(find . -name "*_test.go" -not -path "./vendor/*" | wc -l)
+          echo "test_files=${TEST_FILES}" >> $GITHUB_OUTPUT
+          
+          # Calculate test coverage ratio
+          if [ $GO_FILES -gt 0 ]; then
+            TEST_RATIO=$(echo "scale=2; $TEST_FILES * 100 / $GO_FILES" | bc)
+            echo "test_ratio=${TEST_RATIO}" >> $GITHUB_OUTPUT
+          else
+            echo "test_ratio=0" >> $GITHUB_OUTPUT
+          fi
+          
+          # Count lines of code
+          LOC=$(find . -name "*.go" -not -path "./vendor/*" -exec wc -l {} + | tail -1 | awk '{print $1}')
+          echo "lines_of_code=${LOC}" >> $GITHUB_OUTPUT
+
+      - name: Check documentation
+        id: docs
+        run: |
+          echo "Checking documentation..."
+          
+          # Check if README is up to date
+          README_SIZE=$(wc -c < README.md)
+          
+          # Check for documentation files
+          DOC_FILES=$(find docs -name "*.md" 2>/dev/null | wc -l)
+          echo "doc_files=${DOC_FILES}" >> $GITHUB_OUTPUT
+          echo "readme_size=${README_SIZE}" >> $GITHUB_OUTPUT
+
+      - name: Generate health report
+        id: report
+        run: |
+          cat << EOF > health-report.md
+          # 🏥 Repository Health Report
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ## 📊 Code Metrics
+          
+          - **Go Files**: ${{ steps.metrics.outputs.go_files }}
+          - **Test Files**: ${{ steps.metrics.outputs.test_files }}
+          - **Test/Code Ratio**: ${{ steps.metrics.outputs.test_ratio }}%
+          - **Lines of Code**: ${{ steps.metrics.outputs.lines_of_code }}
+          
+          ## 📚 Documentation
+          
+          - **README Size**: ${{ steps.docs.outputs.readme_size }} bytes
+          - **Documentation Files**: ${{ steps.docs.outputs.doc_files }}
+          
+          ## 📦 Dependencies
+          
+          - **Outdated Dependencies**: ${{ steps.deps.outputs.outdated_count }}
+          
+          ## 🔍 Structure Check
+          
+          ${{ steps.structure.outputs.has_structure_issues == 'true' && '⚠️ Issues found:\n' || '✅ All required files present' }}
+          ${{ steps.structure.outputs.structure_issues }}
+          
+          ## 💡 Recommendations
+          
+          EOF
+          
+          # Add recommendations based on metrics
+          if [ ${{ steps.metrics.outputs.test_ratio }} -lt 50 ]; then
+            echo "- Consider adding more tests (current ratio: ${{ steps.metrics.outputs.test_ratio }}%)" >> health-report.md
+          fi
+          
+          if [ ${{ steps.deps.outputs.outdated_count }} -gt 10 ]; then
+            echo "- Many outdated dependencies detected. Consider updating them." >> health-report.md
+          fi
+          
+          if [ ${{ steps.docs.outputs.readme_size }} -lt 1000 ]; then
+            echo "- README is quite small. Consider adding more documentation." >> health-report.md
+          fi
+          
+          cat health-report.md
+
+      - name: Upload health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report
+          path: health-report.md
+          retention-days: 90
+
+      - name: Create issue if problems found
+        if: steps.structure.outputs.has_structure_issues == 'true' || steps.deps.outputs.outdated_count > 20
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('health-report.md', 'utf8');
+            
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'repository-health'
+            });
+            
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '🏥 Repository Health Check: Issues Detected',
+                body: report,
+                labels: ['repository-health', 'maintenance']
+              });
+            }
