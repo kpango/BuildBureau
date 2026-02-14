@@ -2,7 +2,7 @@
 # Multi-stage build for optimal image size and security
 
 # Stage 1: Builder
-FROM golang:1.25-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 # Install build dependencies
 # - make: Required for Makefile build process
