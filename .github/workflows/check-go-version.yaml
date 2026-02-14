@@ -1,0 +1,118 @@
+#
+# Copyright (C) 2024-2026 BuildBureau team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: "Check Go Version Consistency"
+on:
+  pull_request:
+    paths:
+      - "go.mod"
+      - ".github/workflows/**/*.yml"
+      - ".github/workflows/**/*.yaml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-go-version:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract Go version from go.mod
+        id: gomod
+        run: |
+          GO_VERSION=$(grep -E "^go [0-9]+\.[0-9]+(\.[0-9]+)?" go.mod | awk '{print $2}')
+          echo "version=${GO_VERSION}" >> $GITHUB_OUTPUT
+          echo "Go version in go.mod: ${GO_VERSION}"
+
+      - name: Check workflow files
+        id: check
+        run: |
+          GO_MOD_VERSION="${{ steps.gomod.outputs.version }}"
+          echo "Checking for Go version ${GO_MOD_VERSION} in workflow files..."
+          
+          INCONSISTENT_FILES=""
+          
+          for file in .github/workflows/*.yml .github/workflows/*.yaml; do
+            if [ -f "$file" ]; then
+              # Check if file contains go-version
+              if grep -q "go-version:" "$file"; then
+                # Extract version(s) from the file
+                VERSIONS=$(grep "go-version:" "$file" | sed "s/.*go-version: *['\"]*//" | sed "s/['\"].*//" | sort -u)
+                
+                for VERSION in $VERSIONS; do
+                  # Skip if it's a variable or expression
+                  if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+ ]]; then
+                    if [ "$VERSION" != "$GO_MOD_VERSION" ]; then
+                      echo "❌ Inconsistent version in $file: $VERSION (expected $GO_MOD_VERSION)"
+                      INCONSISTENT_FILES="${INCONSISTENT_FILES}${file}:${VERSION}\n"
+                    else
+                      echo "✓ Consistent version in $file: $VERSION"
+                    fi
+                  fi
+                done
+              fi
+            fi
+          done
+          
+          if [ -n "$INCONSISTENT_FILES" ]; then
+            echo "has_inconsistency=true" >> $GITHUB_OUTPUT
+            echo "inconsistent_files<<EOF" >> $GITHUB_OUTPUT
+            echo -e "${INCONSISTENT_FILES}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_inconsistency=false" >> $GITHUB_OUTPUT
+            echo "✓ All workflow files have consistent Go versions"
+          fi
+
+      - name: Comment on PR if inconsistencies found
+        if: steps.check.outputs.has_inconsistency == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const inconsistencies = `${{ steps.check.outputs.inconsistent_files }}`;
+            const goModVersion = `${{ steps.gomod.outputs.version }}`;
+            
+            const files = inconsistencies.trim().split('\n')
+              .filter(f => f)
+              .map(f => {
+                const [file, version] = f.split(':');
+                return `- \`${file}\`: uses \`${version}\``;
+              }).join('\n');
+            
+            const body = `## ⚠️ Go Version Inconsistency Detected
+            
+            The Go version in \`go.mod\` is \`${goModVersion}\`, but some workflow files use different versions:
+            
+            ${files}
+            
+            Please update the workflow files to use the same Go version as \`go.mod\`.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail if inconsistencies found
+        if: steps.check.outputs.has_inconsistency == 'true'
+        run: |
+          echo "::error::Go version inconsistencies detected. Please update workflow files."
+          exit 1

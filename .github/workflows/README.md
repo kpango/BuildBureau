@@ -515,6 +515,88 @@ When updating workflows:
 
 ---
 
+## New Advanced Features
+
+### Custom Composite Actions
+
+BuildBureau now includes reusable composite actions in `.github/actions/`:
+
+#### `setup-go`
+- Automatically detects Go version from `go.mod`
+- Supports version override via input
+- Includes caching support
+- Verifies installation
+
+#### `dump-context`
+- Dumps all GitHub context for debugging
+- Shows environment variables, job context, runner info
+- Useful for troubleshooting workflows
+
+#### `notify-slack`
+- Sends formatted notifications to Slack
+- Supports success/failure/info status colors
+- Includes workflow details and links
+- Customizable message and workflow name
+
+### ChatOps Workflow (`chatops.yaml`)
+
+Interact with PRs using commands in comments:
+
+```bash
+# Add labels to a PR
+/label bug priority/high
+
+# Rebase PR on base branch
+/rebase
+
+# Auto-format code
+/format
+
+# Show help
+/help
+```
+
+**Permissions:** Defined in `.github/chatops_permissions.yaml`
+- **Owner**: Full access to all commands
+- **Maintainer**: label, rebase, format, approve
+- **Contributor**: label, format
+- **Member**: label, format
+
+### Enhanced Labeling (`labeler.yaml`, `pr-size-labeler.yaml`)
+
+Automatic labeling based on:
+- Changed file patterns (area/*, type/*, language/*)
+- PR size (size/XS through size/XL)
+- Content detection
+
+### Benchmark Tracking (`benchmark.yaml`)
+
+- Runs Go benchmarks on code changes
+- Tracks performance over time
+- Comments results on PRs
+- Alerts on performance regressions
+
+### Merge Conflict Detection (`check-conflict.yaml`)
+
+- Automatically detects merge conflicts
+- Comments on PR with conflict details
+- Adds/removes `merge-conflict` label
+
+### Go Version Consistency (`check-go-version.yaml`)
+
+- Ensures all workflows use the same Go version as go.mod
+- Comments on inconsistencies
+- Fails if mismatches found
+
+### Coverage Reporting (`coverage.yaml`)
+
+- Comprehensive test coverage tracking
+- Uploads to Codecov
+- Generates HTML reports
+- Artifacts for 30 days
+
+---
+
 ## Resources
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
@@ -522,6 +604,7 @@ When updating workflows:
 - [CodeQL Documentation](https://codeql.github.com/docs/)
 - [Dependabot Documentation](https://docs.github.com/en/code-security/dependabot)
 - [Semantic Versioning](https://semver.org/)
+- [vdaas/vald GitHub Actions Reference](https://github.com/vdaas/vald/tree/main/.github)
 
 ---
 
