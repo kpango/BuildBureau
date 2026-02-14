@@ -6,6 +6,30 @@ The BuildBureau Makefile provides a comprehensive, standardized interface for
 building, testing, and managing the project. It's designed to be used
 consistently across local development, Docker builds, and CI/CD pipelines.
 
+### Modular Structure
+
+The Makefile has been refactored into a modular structure inspired by the
+[vdaas/vald](https://github.com/vdaas/vald) repository, improving maintainability
+and organization:
+
+- **Main Makefile**: Entry point that includes all modules
+- **Makefile.d/**: Directory containing specialized module files:
+  - `variables.mk` - Configuration and variables
+  - `functions.mk` - Common utility functions
+  - `tools.mk` - Tool installation and management
+  - `build.mk` - Build targets
+  - `test.mk` - Testing targets
+  - `proto.mk` - Protocol buffer generation
+  - `dependencies.mk` - Dependency management
+  - `format.mk` - Code formatting
+  - `lint.mk` - Linting and code quality
+  - `security.mk` - Security scanning
+  - `docker.mk` - Docker operations
+  - `ci.mk` - CI/CD targets
+  - `git.mk` - Release and version management
+
+The modular structure improves maintainability by separating concerns into focused files.
+
 ## Quick Start
 
 ```bash
