@@ -25,6 +25,7 @@ integration** supporting **multiple providers** and **persistent memory**.
 - 🔗 **Live Slack Notifications**: Real-time updates to your Slack workspace
 - 🏗️ **Production-Ready Architecture**: Built with industry-standard libraries
 - 🎯 **End-to-End Implementation**: Not just stubs - working AI-powered agents
+- 🔄 **Generic Agent System**: Configuration-driven agents with flexible role assignment
 
 ## Overview
 
@@ -39,6 +40,41 @@ BuildBureau implements a five-layer organizational hierarchy:
 - **Manager**: Uses LLM + past designs to produce detailed software
   specifications
 - **Engineer**: Uses LLM + past implementations to generate actual code
+
+### 🆕 Generic Agent System
+
+BuildBureau now supports a **configuration-driven generic agent system** that eliminates the need for role-specific code:
+
+- **Flexible Roles**: Define any agent role through YAML configuration
+- **Behavior via Prompts**: Agent behavior driven by system prompts, not hardcoded logic
+- **Dynamic Hierarchy**: Build organizational structures purely from configuration
+- **LLM-Powered Decisions**: Agents use LLM with role-specific prompts for intelligent task processing
+- **Memory-Enhanced**: Agents learn from past interactions to improve decision-making
+
+📚 **See [Generic Agent System Documentation](docs/GENERIC_AGENT_SYSTEM.md) for complete details**
+
+#### Quick Example
+
+```yaml
+# Define a custom role in YAML
+name: TechLead
+role: TechLead
+system_prompt: |
+  You are a Tech Lead at BuildBureau.
+  Review code, make architectural decisions,
+  and guide the engineering team.
+capabilities:
+  - code_review
+  - architecture_design
+  - team_guidance
+```
+
+```go
+// Use the generic system
+org, _ := agent.NewGenericOrganization(config)
+org.Start(ctx)
+response, _ := org.ProcessTask(ctx, task)
+```
 
 ## Features
 
