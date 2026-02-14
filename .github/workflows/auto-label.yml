@@ -48,7 +48,7 @@ jobs:
           contains(github.event.pull_request.title, 'doc') ||
           contains(github.event.pull_request.title, 'docs') ||
           contains(github.event.pull_request.body, '[x] Documentation')
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -62,7 +62,7 @@ jobs:
         if: |
           contains(github.event.pull_request.title, 'BREAKING') ||
           contains(github.event.pull_request.body, 'BREAKING CHANGE')
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -79,7 +79,7 @@ jobs:
     
     steps:
       - name: Auto-label issues
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const issue = context.payload.issue;
