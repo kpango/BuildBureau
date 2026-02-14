@@ -7,11 +7,16 @@
 # ============================================================================
 
 # Application info
+ORG ?= kpango
+NAME := BuildBureau
+REPO := $(ORG)/$(NAME)
 APP_NAME := buildbureau
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
+DATETIME := $(BUILD_TIME)
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+GO_VERSION ?= $(shell go version | awk '{print $$3}')
 
 # Build configuration
 BUILD_DIR := ./build
@@ -45,15 +50,22 @@ CGO_ENABLED ?= 1
 # Docker configuration
 DOCKER_REGISTRY ?= 
 DOCKER_IMAGE ?= $(APP_NAME)
+IMAGE_NAME ?= $(APP_NAME)
 DOCKER_TAG ?= $(VERSION)
+TAG ?= $(VERSION)
 DOCKER_FULL_IMAGE := $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)$(DOCKER_IMAGE):$(DOCKER_TAG)
 DOCKER_PLATFORMS ?= linux/amd64,linux/arm64
 
 # Test configuration
 TEST_TIMEOUT ?= 10m
+GOTEST_TIMEOUT ?= 30m
 TEST_FLAGS ?= -v -race -count=1
 COVERAGE_OUT := $(COVERAGE_DIR)/coverage.out
 COVERAGE_HTML := $(COVERAGE_DIR)/coverage.html
+
+# Tool versions
+GOLANGCILINT_VERSION ?= v1.55.2
+BUF_VERSION ?= v1.28.1
 
 # Tools
 GOLANGCI_LINT := $(GOBIN)/golangci-lint
@@ -879,3 +891,15 @@ bootstrap-ci: build
 	@echo "Running BuildBureau in bootstrap mode (CI)..."
 	@export BUILDBUREAU_CONFIG=bootstrap/config.yaml && \
 ./build/buildbureau --non-interactive || true
+
+# ============================================================================
+# Include Modular Makefiles (Vald-inspired pattern)
+# ============================================================================
+
+# Include all modular makefiles from Makefile.d/
+-include Makefile.d/functions.mk
+-include Makefile.d/build.mk
+-include Makefile.d/test.mk
+-include Makefile.d/tools.mk
+-include Makefile.d/docker.mk
+-include Makefile.d/lint.mk
